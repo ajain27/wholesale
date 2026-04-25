@@ -8,11 +8,12 @@ import {
   RefreshCw,
   Search,
   Send,
-  Trash2,
 } from "lucide-react";
 import "./styles.css";
-
-const STORAGE_KEY = "wholesale-real-estate-crm-v2";
+import { getSavedDeals, currency, monthKey } from "./utils";
+import Wholesale_form from "./wholesale_form";
+import { Select, Stat } from "./elements";
+import Wholesale_data from "./Wholesale_data";
 
 const emptyForm = {
   address: "",
@@ -30,54 +31,6 @@ const emptyForm = {
   closed: "No",
 };
 
-const seedDeals = [
-  {
-    id: crypto.randomUUID(),
-    address: "123 Main St",
-    city: "Austin",
-    zipCode: "78701",
-    state: "TX",
-    arv: 450000,
-    rehabCost: 45000,
-    mao: 275000,
-    offerStatus: "Not Sent",
-    offerDate: "",
-    sellerAccepted: "No",
-    assigned: "No",
-    notes: "New lead. Needs comp review.",
-    closed: "No",
-  },
-];
-
-function normalizeDeal(deal) {
-  return {
-    ...deal,
-    zipCode: deal.zipCode || deal.county || "",
-  };
-}
-
-function getSavedDeals() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).map(normalizeDeal) : seedDeals;
-  } catch {
-    return seedDeals;
-  }
-}
-
-function currency(value) {
-  const number = Number(value || 0);
-  return number.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-}
-
-function monthKey(dateString) {
-  return dateString ? dateString.slice(0, 7) : "";
-}
-
 function App() {
   const [deals, setDeals] = useState(getSavedDeals);
   const [form, setForm] = useState(emptyForm);
@@ -90,6 +43,8 @@ function App() {
     search: "",
     closed: "All",
   });
+
+  const STORAGE_KEY = "wholesale-real-estate-crm-v2";
 
   function persist(nextDeals) {
     setDeals(nextDeals);
@@ -322,115 +277,11 @@ function App() {
         </section>
 
         <section className="panel" id="add-property">
-          <div className="panel-header">
-            <div>
-              <h2>Add Property Lead</h2>
-              <p>
-                Once added, records appear as disabled/read-only fields in the
-                board.
-              </p>
-            </div>
-          </div>
-
-          <form className="add-form" onSubmit={addDeal}>
-            <Field
-              label="Property Address"
-              name="address"
-              value={form.address}
-              onChange={handleChange}
-            />
-            <Field
-              label="City"
-              name="city"
-              value={form.city}
-              onChange={handleChange}
-            />
-            <Field
-              label="Zip Code"
-              name="zipCode"
-              value={form.zipCode}
-              onChange={handleChange}
-            />
-            <Field
-              label="State"
-              name="state"
-              value={form.state}
-              onChange={handleChange}
-              maxLength="2"
-            />
-            <Field
-              label="ARV"
-              name="arv"
-              type="number"
-              value={form.arv}
-              onChange={handleChange}
-            />
-            <Field
-              label="Rehab Cost"
-              name="rehabCost"
-              type="number"
-              value={form.rehabCost}
-              onChange={handleChange}
-            />
-            <Field
-              label="MAO"
-              name="mao"
-              type="number"
-              value={form.mao}
-              onChange={handleChange}
-            />
-            <Select
-              label="Offer Status"
-              name="offerStatus"
-              value={form.offerStatus}
-              onChange={handleChange}
-              options={[
-                "Not Sent",
-                "Offer Sent",
-                "Under Review",
-                "Rejected",
-                "Accepted",
-                "Closed",
-              ]}
-            />
-            <Field
-              label="Offer Date"
-              name="offerDate"
-              type="date"
-              value={form.offerDate}
-              onChange={handleChange}
-            />
-            <Select
-              label="Accepted"
-              name="sellerAccepted"
-              value={form.sellerAccepted}
-              onChange={handleChange}
-              options={["No", "Maybe", "Yes"]}
-            />
-            <Select
-              label="Assigned"
-              name="assigned"
-              value={form.assigned}
-              onChange={handleChange}
-              options={["No", "Yes"]}
-            />
-            <Field
-              label="Notes"
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-            />
-            <Select
-              label="Closed"
-              name="closed"
-              value={form.closed}
-              onChange={handleChange}
-              options={["No", "Yes"]}
-            />
-            <button className="primary-btn form-btn" type="submit">
-              Save
-            </button>
-          </form>
+          <Wholesale_form
+            addDeal={addDeal}
+            form={form}
+            handleChange={handleChange}
+          />
         </section>
 
         <section className="panel board-panel">
@@ -515,144 +366,15 @@ function App() {
               />
             </label>
           </div>
-
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Property Address</th>
-                  <th>City</th>
-                  <th>Zip Code</th>
-                  <th>State</th>
-                  <th>ARV</th>
-                  <th>Rehab Cost</th>
-                  <th>MAO</th>
-                  <th>Offer Status</th>
-                  <th>Offer Date</th>
-                  <th>Accepted</th>
-                  <th>Assigned</th>
-                  <th>Closed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredDeals.map((deal) => (
-                  <tr key={deal.id}>
-                    <ReadOnlyCell value={deal.address} wide />
-                    <ReadOnlyCell value={deal.city} />
-                    <ReadOnlyCell value={deal.zipCode} />
-                    <ReadOnlyCell value={deal.state} small />
-                    <ReadOnlyCell value={currency(deal.arv)} />
-                    <ReadOnlyCell value={currency(deal.rehabCost)} />
-                    <ReadOnlyCell value={currency(deal.mao)} />
-                    <td>
-                      <Badge value={deal.offerStatus} />
-                    </td>
-                    <ReadOnlyCell
-                      value={
-                        deal.offerDate
-                          ? new Date(
-                              `${deal.offerDate}T00:00:00`,
-                            ).toLocaleDateString()
-                          : "—"
-                      }
-                    />
-                    <td>
-                      <Badge value={deal.sellerAccepted} />
-                    </td>
-                    <td>
-                      <Badge value={deal.assigned} />
-                    </td>
-                    <td>
-                      <select
-                        className={`badge ${deal.closed.toLowerCase()}`}
-                        value={deal.closed}
-                        onChange={(e) =>
-                          updateDeal(deal.id, "closed", e.target.value)
-                        }
-                      >
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button
-                        className="danger-btn"
-                        title="Delete"
-                        onClick={() => deleteDeal(deal.id)}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="table-footer">
-            Showing {filteredDeals.length} of {deals.length} results
-          </div>
+          <Wholesale_data
+            filteredDeals={filteredDeals}
+            deals={deals}
+            deleteDeal={deleteDeal}
+          />
         </section>
       </main>
     </div>
   );
-}
-
-function Stat({ icon, label, value, hint }) {
-  return (
-    <article className="stat-card">
-      <div className="stat-icon">{icon}</div>
-      <div>
-        <p>{label}</p>
-        <strong>{value}</strong>
-        {hint && <span>{hint}</span>}
-      </div>
-    </article>
-  );
-}
-
-function Field({ label, ...props }) {
-  return (
-    <label className="field">
-      <span>{label}</span>
-      <input {...props} />
-    </label>
-  );
-}
-
-function Select({ label, options, ...props }) {
-  return (
-    <label className="field">
-      <span>{label}</span>
-      <select {...props}>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-function ReadOnlyCell({ value, wide, small }) {
-  return (
-    <td>
-      <input
-        className={`readonly-input ${wide ? "wide" : ""} ${small ? "small" : ""}`}
-        value={value}
-        disabled
-        readOnly
-      />
-    </td>
-  );
-}
-
-function Badge({ value }) {
-  const className = String(value || "")
-    .toLowerCase()
-    .replaceAll(" ", "-");
-  return <span className={`badge ${className}`}>{value || "—"}</span>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);
