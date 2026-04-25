@@ -6,14 +6,15 @@ import {
   Home,
   Plus,
   RefreshCw,
-  Search,
   Send,
+  Star,
 } from "lucide-react";
-import "./styles.css";
-import { getSavedDeals, currency, monthKey } from "./utils";
+import "../css/styles.css";
+import { getSavedDeals, monthKey } from "../utils/utils";
 import Wholesale_form from "./wholesale_form";
-import { Select, Stat } from "./elements";
+import { Stat } from "./elements";
 import Wholesale_data from "./Wholesale_data";
+import Wholesale_filters from "./Wholesale_filters";
 
 const emptyForm = {
   address: "",
@@ -31,7 +32,9 @@ const emptyForm = {
   closed: "No",
 };
 
-function App() {
+const STORAGE_KEY = "wholesale-real-estate-crm-v2";
+
+function Wholesale() {
   const [deals, setDeals] = useState(getSavedDeals);
   const [form, setForm] = useState(emptyForm);
   const [filters, setFilters] = useState({
@@ -44,12 +47,10 @@ function App() {
     closed: "All",
   });
 
-  const STORAGE_KEY = "wholesale-real-estate-crm-v2";
-
-  function persist(nextDeals) {
+  const persist = function persist(nextDeals) {
     setDeals(nextDeals);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextDeals));
-  }
+  };
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -98,30 +99,6 @@ function App() {
     // Push to end of array to show at the bottom
     persist([...deals, newDeal]);
     setForm(emptyForm);
-  }
-
-  function updateDeal(id, field, value) {
-    // Business Rule: Enforce the "Closed" requirements even on updates
-    if (field === "closed" && value === "Yes") {
-      const deal = deals.find((d) => d.id === id);
-      const canClose =
-        deal.offerStatus === "Offer Sent" &&
-        deal.sellerAccepted === "Yes" &&
-        deal.assigned === "Yes";
-
-      if (!canClose) {
-        alert(
-          "Cannot Close: Offer must be 'Sent', and both 'Accepted' and 'Assigned' must be 'Yes'.",
-        );
-        return;
-      }
-    }
-
-    const nextDeals = deals.map((deal) =>
-      deal.id === id ? { ...deal, [field]: value } : deal,
-    );
-
-    persist(nextDeals);
   }
 
   function deleteDeal(id) {
@@ -235,7 +212,6 @@ function App() {
           <div className="avatar">AJ</div>
           <div>
             <strong>Local CRM</strong>
-            <span>Browser storage</span>
           </div>
         </div>
       </aside>
@@ -273,108 +249,31 @@ function App() {
             value={acceptedOffers}
           />
           <Stat icon={<RefreshCw />} label="Assigned" value={assignedDeals} />
-          <Stat icon={<RefreshCw />} label="Closed" value={closedDeals} />
+          <Stat icon={<Star />} label="Closed" value={closedDeals} />
         </section>
 
-        <section className="panel" id="add-property">
-          <Wholesale_form
-            addDeal={addDeal}
-            form={form}
-            handleChange={handleChange}
-          />
-        </section>
+        <Wholesale_form
+          addDeal={addDeal}
+          form={form}
+          handleChange={handleChange}
+        />
 
-        <section className="panel board-panel">
-          <div className="filters">
-            <Select
-              label="State"
-              value={filters.state}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  state: e.target.value,
-                  zipCode: "All",
-                })
-              }
-              options={states}
-            />
-            <Select
-              label="Zip Code"
-              value={filters.zipCode}
-              onChange={(e) =>
-                setFilters({ ...filters, zipCode: e.target.value })
-              }
-              options={zipCodes}
-            />
-            <Select
-              label="Offer Status"
-              value={filters.offerStatus}
-              onChange={(e) =>
-                setFilters({ ...filters, offerStatus: e.target.value })
-              }
-              options={[
-                "All",
-                "Not Sent",
-                "Offer Sent",
-                "Under Review",
-                "Rejected",
-                "Accepted",
-                "Closed",
-              ]}
-            />
-            <Select
-              label="Accepted"
-              value={filters.sellerAccepted}
-              onChange={(e) =>
-                setFilters({ ...filters, sellerAccepted: e.target.value })
-              }
-              options={["All", "No", "Maybe", "Yes"]}
-            />
-            <Select
-              label="Assigned"
-              value={filters.assigned}
-              onChange={(e) =>
-                setFilters({ ...filters, assigned: e.target.value })
-              }
-              options={["All", "No", "Yes"]}
-            />
-            <button
-              className="secondary-btn"
-              onClick={() =>
-                setFilters({
-                  state: "All",
-                  zipCode: "All",
-                  offerStatus: "All",
-                  sellerAccepted: "All",
-                  assigned: "All",
-                  search: "",
-                  closed: "All",
-                })
-              }
-            >
-              <RefreshCw size={16} /> Clear Filters
-            </button>
-            <label className="search-field">
-              <Search size={18} />
-              <input
-                value={filters.search}
-                id="search"
-                onChange={(e) =>
-                  setFilters({ ...filters, search: e.target.value })
-                }
-                placeholder="Search by address, city, or zip code..."
-              />
-            </label>
-          </div>
-          <Wholesale_data
-            filteredDeals={filteredDeals}
-            deals={deals}
-            deleteDeal={deleteDeal}
-          />
-        </section>
+        <Wholesale_filters
+          filters={filters}
+          states={states}
+          zipCodes={zipCodes}
+          RefreshCw={RefreshCw}
+          setFilters={setFilters}
+        />
+        <Wholesale_data
+          filteredDeals={filteredDeals}
+          deals={deals}
+          deleteDeal={deleteDeal}
+          persist={persist}
+        />
       </main>
     </div>
   );
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(<Wholesale />);

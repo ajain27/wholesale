@@ -1,8 +1,32 @@
 import { ReadOnlyCell, Badge } from "./elements";
 import { Trash2 } from "lucide-react";
-import { currency } from "./utils";
+import { currency } from "../utils/utils";
 
-function Wholesale_data({ filteredDeals, deals, deleteDeal }) {
+function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
+  function updateDeal(id, field, value) {
+    // Business Rule: Enforce the "Closed" requirements even on updates
+    if (field === "closed" && value === "Yes") {
+      const deal = deals.find((d) => d.id === id);
+      const canClose =
+        deal.offerStatus === "Accepted" &&
+        deal.sellerAccepted === "Yes" &&
+        deal.assigned === "Yes";
+
+      if (!canClose) {
+        alert(
+          "Cannot Close: Offer must be 'Accepted',and 'Assigned' must be 'Yes'.",
+        );
+        return;
+      }
+    }
+
+    const nextDeals = deals.map((deal) =>
+      deal.id === id ? { ...deal, [field]: value } : deal,
+    );
+
+    persist(nextDeals);
+  }
+
   return (
     <>
       <div className="table-wrap">
