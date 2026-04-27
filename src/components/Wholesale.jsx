@@ -78,7 +78,8 @@ function Wholesale() {
     const { name, value } = event.target;
 
     if (name === "city" && /\d/.test(value)) return;
-    if (name === "zipCode" && /[a-zA-Z]/.test(value)) return;
+    if (name === "zipCode" && /[^0-9]/.test(value)) return;
+    if (name === "state" && /[^a-zA-Z]/.test(value)) return;
 
     if (name === "closed" && value === "Yes") {
       const isReady =
@@ -190,6 +191,7 @@ function Wholesale() {
     const maoNum = parseNumber(form.mao);
     const contractNum = parseNumber(form.contractPrice);
     const assignedNum = parseNumber(form.assignedPrice);
+    const rehabNum = parseNumber(form.rehabCost);
 
     if (arvNum > 0) {
       if (rehabNum > arvNum) { alert("Rehab cost cannot be more than ARV."); return; }
@@ -208,7 +210,7 @@ function Wholesale() {
       rehabCost: parseNumber(form.rehabCost),
       mao: parseNumber(form.mao),
       contractPrice: parseNumber(form.contractPrice),
-      assignedPrice: parseNumber(form.assignedPrice),
+      // assignedPrice: parseNumber(form.assignedPrice),
       closedInMonth: form.closedInMonth || "",
     };
 

@@ -56,12 +56,9 @@ function Wholesale_filters({
             }
             options={[
               "All",
-              "Not Sent",
               "Offer Sent",
-              "Under Review",
               "Rejected",
               "Accepted",
-              "Closed",
             ]}
           />
           <Select

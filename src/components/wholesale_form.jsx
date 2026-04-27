@@ -33,6 +33,7 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             name="zipCode"
             value={form.zipCode}
             onChange={handleChange}
+            maxLength="5"
             required
           />
           <Field
@@ -103,7 +104,6 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             value={form.assigned}
             onChange={handleChange}
             options={["No", "Yes"]}
-            required
           />
           <Field
             label="Contract Price"
@@ -121,7 +121,7 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             value={form.assignedPrice}
             onChange={handleChange}
             onBlur={handleBlur}
-            required
+            required={form.assigned === "Yes"}
           />
           <Field
             label="Notes"
