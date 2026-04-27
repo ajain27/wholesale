@@ -1,16 +1,11 @@
 import { Home, Users } from "lucide-react";
+import logo from "../assets/logo.png";
 
 function Sidebar({ activeView, setActiveView }) {
   return (
     <aside className="sidebar">
-      <div className="brand">
-        <div className="brand-icon">
-          <Home size={28} />
-        </div>
-        <div>
-          <strong>PIPELINE</strong>
-          <span>Wholesale CRM</span>
-        </div>
+      <div className="brand" style={{ display: 'block', textAlign: 'center', paddingBottom: '20px', borderBottom: '1px solid var(--line)' }}>
+        <img src={logo} alt="You Win Estates" style={{ width: '100%', maxWidth: '180px', height: 'auto', display: 'block', margin: '0 auto' }} />
       </div>
       <nav>
         <a
