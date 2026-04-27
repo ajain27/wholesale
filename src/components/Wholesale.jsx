@@ -39,7 +39,6 @@ function Wholesale() {
   const [form, setForm] = useState(emptyForm);
   const [filters, setFilters] = useState({
     state: "All",
-    zipCode: "All",
     offerStatus: "All",
     sellerAccepted: "All",
     assigned: "All",
@@ -120,29 +119,13 @@ function Wholesale() {
     [deals],
   );
 
-  const zipCodes = useMemo(() => {
-    const visible =
-      filters.state === "All"
-        ? deals
-        : deals.filter((d) => d.state === filters.state);
-    return [
-      "All",
-      ...new Set(
-        visible
-          .map((d) => d.zipCode)
-          .filter(Boolean)
-          .sort(),
-      ),
-    ];
-  }, [deals, filters.state]);
+
 
   const filteredDeals = useMemo(() => {
     const query = filters.search.toLowerCase();
     return deals.filter((deal) => {
       const matchesState =
         filters.state === "All" || deal.state === filters.state;
-      const matchesZip =
-        filters.zipCode === "All" || deal.zipCode === filters.zipCode;
       const matchesStatus =
         filters.offerStatus === "All" ||
         deal.offerStatus === filters.offerStatus;
@@ -170,7 +153,6 @@ function Wholesale() {
 
       return (
         matchesState &&
-        matchesZip &&
         matchesStatus &&
         matchesAccepted &&
         matchesAssigned &&
@@ -261,7 +243,6 @@ function Wholesale() {
         <Wholesale_filters
           filters={filters}
           states={states}
-          zipCodes={zipCodes}
           RefreshCw={RefreshCw}
           setFilters={setFilters}
         />

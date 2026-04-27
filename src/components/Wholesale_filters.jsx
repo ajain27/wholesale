@@ -4,7 +4,6 @@ import { Select } from "./elements";
 function Wholesale_filters({
   filters,
   states,
-  zipCodes,
   RefreshCw,
   setFilters,
 }) {
@@ -19,18 +18,9 @@ function Wholesale_filters({
               setFilters({
                 ...filters,
                 state: e.target.value,
-                zipCode: "All",
               })
             }
             options={states}
-          />
-          <Select
-            label="Zip Code"
-            value={filters.zipCode}
-            onChange={(e) =>
-              setFilters({ ...filters, zipCode: e.target.value })
-            }
-            options={zipCodes}
           />
           <Select
             label="Offer Status"
@@ -69,7 +59,6 @@ function Wholesale_filters({
             onClick={() =>
               setFilters({
                 state: "All",
-                zipCode: "All",
                 offerStatus: "All",
                 sellerAccepted: "All",
                 assigned: "All",
