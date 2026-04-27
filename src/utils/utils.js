@@ -18,6 +18,7 @@ const seedDeals = [
 ];
 
 const STORAGE_KEY = "wholesale-real-estate-crm-v2";
+const BUYERS_STORAGE_KEY = "wholesale-buyers-crm-v1";
 
 function normalizeDeal(deal) {
   return {
@@ -35,6 +36,15 @@ function getSavedDeals() {
   }
 }
 
+function getSavedBuyers() {
+  try {
+    const saved = localStorage.getItem(BUYERS_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
 function currency(value) {
   const number = Number(value || 0);
   return number.toLocaleString("en-US", {
@@ -48,4 +58,4 @@ function monthKey(dateString) {
   return dateString ? dateString.slice(0, 7) : "";
 }
 
-export { normalizeDeal, getSavedDeals, currency, monthKey };
+export { normalizeDeal, getSavedDeals, getSavedBuyers, BUYERS_STORAGE_KEY, currency, monthKey };

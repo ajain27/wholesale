@@ -4,6 +4,8 @@ import { Select } from "./elements";
 function Wholesale_filters({
   filters,
   states,
+  months,
+  years,
   RefreshCw,
   setFilters,
 }) {
@@ -21,6 +23,30 @@ function Wholesale_filters({
               })
             }
             options={states}
+          />
+          <Select
+            label="Offer Sent In"
+            value={filters.offerMonth}
+            onChange={(e) =>
+              setFilters({ ...filters, offerMonth: e.target.value })
+            }
+            options={months}
+          />
+          <Select
+            label="Closed In"
+            value={filters.closedMonth}
+            onChange={(e) =>
+              setFilters({ ...filters, closedMonth: e.target.value })
+            }
+            options={months}
+          />
+          <Select
+            label="Year"
+            value={filters.year}
+            onChange={(e) =>
+              setFilters({ ...filters, year: e.target.value })
+            }
+            options={years}
           />
           <Select
             label="Offer Status"
@@ -64,6 +90,9 @@ function Wholesale_filters({
                 assigned: "All",
                 search: "",
                 closed: "All",
+                offerMonth: "All",
+                closedMonth: "All",
+                year: "All",
               })
             }
           >

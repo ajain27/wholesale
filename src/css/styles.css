@@ -263,12 +263,6 @@ p {
   color: var(--text);
   outline: none;
 }
-.field input:focus,
-.field select:focus,
-.search-field input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(23, 105, 232, 0.12);
-}
 .form-btn {
   height: 44px;
   grid-column: 1 / -1;
@@ -328,19 +322,38 @@ td {
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
 }
+.compact-table th {
+  padding: 12px 14px;
+}
+.compact-table td {
+  padding: 8px 14px;
+}
+.compact-table .readonly-input {
+  height: 36px;
+  border: transparent;
+  background: transparent;
+  padding: 0;
+}
 .readonly-input {
   width: 120px;
   height: 44px;
-  border: 1px solid #d5dfed;
+  border: transparent;
   border-radius: 8px;
-  background: #f8fafc;
+  background: transparent;
   padding: 0 12px;
   color: #111827;
   opacity: 1;
 }
+.readonly-input:focus {
+  outline: none;
+  box-shadow: none;
+}
 .readonly-input.wide {
   width: 180px;
   font-weight: 600;
+}
+.readonly-input.extra-wide {
+  width: 250px;
 }
 .readonly-input.small {
   width: 58px;
@@ -479,4 +492,47 @@ td {
   .filters {
     grid-template-columns: 1fr;
   }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+}
+.modal {
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: var(--shadow);
+}
+.modal h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: var(--text);
+}
+.modal textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  resize: vertical;
+  font-size: 15px;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+.modal textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
 }

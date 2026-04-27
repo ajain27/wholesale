@@ -16,6 +16,7 @@ function BuyerForm({ addBuyer, form, handleChange }) {
             name="fullName"
             value={form.fullName}
             onChange={handleChange}
+            required
           />
           <Field
             label="Email"
@@ -23,6 +24,7 @@ function BuyerForm({ addBuyer, form, handleChange }) {
             type="email"
             value={form.email}
             onChange={handleChange}
+            required
           />
           <Field
             label="Phone Number"
@@ -42,6 +44,7 @@ function BuyerForm({ addBuyer, form, handleChange }) {
             value={form.state}
             onChange={handleChange}
             maxLength="2"
+            required
           />
           <Select
             label="Type of Real Estate"

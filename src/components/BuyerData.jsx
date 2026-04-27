@@ -1,7 +1,20 @@
+import { useState } from "react";
 import { ReadOnlyCell } from "./elements";
-import { Trash2 } from "lucide-react";
+import { Trash2, Edit2, Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
+  const [editingEmailId, setEditingEmailId] = useState(null);
+  const [editEmailValue, setEditEmailValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredBuyers.length / itemsPerPage) || 1;
+  const safePage = Math.min(currentPage, totalPages);
+  
+  const startIndex = (safePage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredBuyers.length);
+  const paginatedBuyers = filteredBuyers.slice(startIndex, endIndex);
+
   function updateBuyer(id, field, value) {
     const nextBuyers = buyers.map((buyer) =>
       buyer.id === id ? { ...buyer, [field]: value } : buyer,
@@ -9,10 +22,20 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
     persist(nextBuyers);
   }
 
+  function startEditingEmail(buyer) {
+    setEditingEmailId(buyer.id);
+    setEditEmailValue(buyer.email || "");
+  }
+
+  function saveEmail(id) {
+    updateBuyer(id, "email", editEmailValue);
+    setEditingEmailId(null);
+  }
+
   return (
     <>
       <div className="table-wrap">
-        <table>
+        <table className="compact-table">
           <thead>
             <tr>
               <th>Full Name</th>
@@ -20,37 +43,45 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
               <th>Phone Number</th>
               <th>City</th>
               <th>State</th>
-              <th>Type of Real Estate</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredBuyers.map((buyer) => (
+            {paginatedBuyers.map((buyer) => (
               <tr key={buyer.id}>
-                <ReadOnlyCell value={buyer.fullName} />
-                <a href={buyer.email ? `mailto:${buyer.email}` : "#"}>
-                  <ReadOnlyCell value={buyer.email} />
-                </a>
-                <a href={buyer.phone ? `tel:${buyer.phone}` : "#"}>
-                  <ReadOnlyCell value={buyer.phone} />
-                </a>
+                <ReadOnlyCell value={buyer.fullName} wide />
+                <td>
+                  {editingEmailId === buyer.id ? (
+                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                      <input 
+                        id={`edit-email-${buyer.id}`}
+                        style={{ width: '220px', height: '36px', padding: '0 8px', border: '1px solid var(--blue)', borderRadius: '6px', outline: 'none' }}
+                        value={editEmailValue}
+                        onChange={(e) => setEditEmailValue(e.target.value)}
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveEmail(buyer.id);
+                          if (e.key === "Escape") setEditingEmailId(null);
+                        }}
+                      />
+                      <button className="ghost-btn" onClick={() => saveEmail(buyer.id)} style={{ width: '32px', height: '32px', minWidth: '32px', padding: 0 }} title="Save">
+                        <Check size={16} color="var(--green)" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                      <input id={`readonly-email-${buyer.id}`} className="readonly-input extra-wide" readOnly value={buyer.email || ""} />
+                      <button className="ghost-btn" onClick={() => startEditingEmail(buyer)} style={{ width: '32px', height: '32px', minWidth: '32px', padding: 0, border: 'none', background: 'transparent' }} title="Edit Email">
+                        <Edit2 size={16} color="var(--muted)" />
+                      </button>
+                    </div>
+                  )}
+                </td>
+                <td>
+                  <input id={`readonly-phone-${buyer.id}`} className="readonly-input" readOnly value={buyer.phone || ""} />
+                </td>
                 <ReadOnlyCell value={buyer.city} />
                 <ReadOnlyCell value={buyer.state} small />
-                <td>
-                  <select
-                    className="badge"
-                    value={buyer.realEstateType}
-                    onChange={(e) =>
-                      updateBuyer(buyer.id, "realEstateType", e.target.value)
-                    }
-                  >
-                    <option value="Single Family">Single Family</option>
-                    <option value="Multi Family">Multi Family</option>
-                    <option value="Commercial">Commercial</option>
-                    <option value="Land">Land</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </td>
                 <td>
                   <button
                     className="danger-btn"
@@ -66,8 +97,34 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
         </table>
       </div>
 
-      <div className="table-footer">
-        Showing {filteredBuyers.length} of {buyers.length} results
+      <div className="table-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          Showing {filteredBuyers.length > 0 ? startIndex + 1 : 0} to {endIndex} of {filteredBuyers.length} results (Total Buyers: {buyers.length})
+        </div>
+        
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button 
+              className="secondary-btn" 
+              disabled={safePage === 1}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              style={{ padding: '6px 10px' }}
+            >
+              <ChevronLeft size={16} /> Prev
+            </button>
+            <span style={{ fontSize: '14px', fontWeight: '500', margin: '0 8px' }}>
+              Page {safePage} of {totalPages}
+            </span>
+            <button 
+              className="secondary-btn" 
+              disabled={safePage === totalPages}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              style={{ padding: '6px 10px' }}
+            >
+              Next <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

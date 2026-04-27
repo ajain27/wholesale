@@ -11,20 +11,20 @@ function Stat({ icon, label, value, hint }) {
   );
 }
 
-function Field({ label, ...props }) {
+function Field({ label, required, ...props }) {
   return (
     <label className="field">
-      <span>{label}</span>
-      <input {...props} />
+      <span>{label}{required && <span style={{color: 'var(--red)', marginLeft: '4px'}}>*</span>}</span>
+      <input required={required} id={props.id || props.name} {...props} />
     </label>
   );
 }
 
-function Select({ label, options, ...props }) {
+function Select({ label, required, options, ...props }) {
   return (
     <label className="field">
-      <span>{label}</span>
-      <select {...props}>
+      <span>{label}{required && <span style={{color: 'var(--red)', marginLeft: '4px'}}>*</span>}</span>
+      <select required={required} id={props.id || props.name} {...props}>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}

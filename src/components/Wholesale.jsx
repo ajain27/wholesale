@@ -18,6 +18,7 @@ import { Stat } from "./elements";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
 import Buyers from "./Buyers";
+import Sidebar from "./Sidebar";
 
 const emptyForm = {
   address: "",
@@ -35,6 +36,7 @@ const emptyForm = {
   assignedPrice: "",
   notes: "",
   closed: "No",
+  closedInMonth: "",
 };
 
 const STORAGE_KEY = "wholesale-real-estate-crm-v2";
@@ -50,6 +52,9 @@ function Wholesale() {
     assigned: "All",
     search: "",
     closed: "All",
+    offerMonth: "All",
+    closedMonth: "All",
+    year: "All",
   });
 
   const persist = function persist(nextDeals) {
@@ -60,21 +65,42 @@ function Wholesale() {
   function handleChange(event) {
     const { name, value } = event.target;
 
+    if (name === "city" && /\d/.test(value)) return;
+    if (name === "zipCode" && /[a-zA-Z]/.test(value)) return;
+
     if (name === "closed" && value === "Yes") {
       const isReady =
-        form.offerStatus === "Offer Sent" &&
         form.sellerAccepted === "Yes" &&
         form.assigned === "Yes";
 
       if (!isReady) {
         alert(
-          "Cannot close: Offer must be 'Sent', and both 'Accepted' and 'Assigned' must be 'Yes'.",
+          "Cannot close: Offer must be 'Accepted', and 'Assigned' must be 'Yes'.",
         );
         return; // Block the change
       }
     }
 
     setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleBlur(event) {
+    const { name, value } = event.target;
+    const currencyFields = [
+      "arv",
+      "rehabCost",
+      "mao",
+      "contractPrice",
+      "assignedPrice",
+    ];
+    if (currencyFields.includes(name) && value) {
+      const numericValue = value.replace(/[^0-9]/g, "");
+      if (numericValue) {
+        const formatted =
+          "$" + parseInt(numericValue, 10).toLocaleString("en-US");
+        setForm((prev) => ({ ...prev, [name]: formatted }));
+      }
+    }
   }
 
   function addDeal(event) {
@@ -91,16 +117,19 @@ function Wholesale() {
       return;
     }
 
+    const parseNumber = (val) => Number(String(val).replace(/[^0-9]/g, ""));
+
     const newDeal = {
       ...form,
       id: crypto.randomUUID(),
       state: form.state.trim().toUpperCase(),
       zipCode: form.zipCode.trim(),
-      arv: Number(form.arv || 0),
-      rehabCost: Number(form.rehabCost || 0),
-      mao: Number(form.mao || 0),
-      contractPrice: Number(form.contractPrice || 0),
-      assignedPrice: Number(form.assignedPrice || 0),
+      arv: parseNumber(form.arv),
+      rehabCost: parseNumber(form.rehabCost),
+      mao: parseNumber(form.mao),
+      contractPrice: parseNumber(form.contractPrice),
+      assignedPrice: parseNumber(form.assignedPrice),
+      closedInMonth: form.closedInMonth || "",
     };
 
     // Push to end of array to show at the bottom
@@ -126,9 +155,27 @@ function Wholesale() {
     ],
     [deals],
   );
+  const years = useMemo(
+    () => [
+      "All",
+      ...new Set(
+        deals
+          .map((d) => (d.offerDate ? d.offerDate.substring(0, 4) : null))
+          .filter(Boolean)
+          .sort()
+      ),
+    ],
+    [deals]
+  );
 
-
-
+  const months = useMemo(
+    () => [
+      "All",
+      "01", "02", "03", "04", "05", "06",
+      "07", "08", "09", "10", "11", "12",
+    ],
+    []
+  );
   const filteredDeals = useMemo(() => {
     const query = filters.search.toLowerCase();
     return deals.filter((deal) => {
@@ -159,68 +206,59 @@ function Wholesale() {
           .toLowerCase()
           .includes(query);
 
+      const dealYear = deal.offerDate ? deal.offerDate.substring(0, 4) : "";
+      const matchesYear = filters.year === "All" || dealYear === filters.year;
+
+      const dealOfferMonth = deal.offerDate ? deal.offerDate.substring(5, 7) : "";
+      const matchesOfferMonth = filters.offerMonth === "All" || dealOfferMonth === filters.offerMonth;
+
+      const dealClosedMonth = deal.closedInMonth || "";
+      const matchesClosedMonth = filters.closedMonth === "All" || dealClosedMonth === filters.closedMonth;
+
       return (
         matchesState &&
         matchesStatus &&
         matchesAccepted &&
         matchesAssigned &&
         matchesSearch &&
-        matchesClosed
+        matchesClosed &&
+        matchesYear &&
+        matchesOfferMonth &&
+        matchesClosedMonth
       );
     });
   }, [deals, filters]);
 
   const currentMonth = new Date().toISOString().slice(0, 7);
-  const offersThisMonth = deals.filter(
+  const offersThisMonth = filteredDeals.filter(
     (deal) => deal.offerDate && monthKey(deal.offerDate) === currentMonth,
   ).length;
-  const acceptedOffers = deals.filter(
+  const acceptedOffers = filteredDeals.filter(
     (deal) => deal.sellerAccepted === "Yes",
   ).length;
-  const assignedDeals = deals.filter((deal) => deal.assigned === "Yes").length;
-  const closedDeals = deals.filter((deal) => deal.closed === "Yes").length;
+  const assignedDeals = filteredDeals.filter((deal) => deal.assigned === "Yes").length;
+  const closedDeals = filteredDeals.filter((deal) => deal.closed === "Yes").length;
   
-  const totalGrossRevenue = deals
+  const totalGrossRevenue = filteredDeals
     .filter((deal) => deal.closed === "Yes" && deal.sellerAccepted === "Yes" && deal.assigned === "Yes")
     .reduce((total, deal) => total + (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)), 0);
 
+  const monthNames = {
+    "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May", "06": "Jun",
+    "07": "Jul", "08": "Aug", "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+  };
+  let revenueLabel = "Total Revenue";
+  if (filters.closedMonth !== "All" && filters.year !== "All") {
+    revenueLabel = `${monthNames[filters.closedMonth]} ${filters.year} Revenue`;
+  } else if (filters.closedMonth !== "All") {
+    revenueLabel = `${monthNames[filters.closedMonth]} Revenue`;
+  } else if (filters.year !== "All") {
+    revenueLabel = `${filters.year} Revenue`;
+  }
+
   return (
     <div className="layout">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-icon">
-            <Home size={28} />
-          </div>
-          <div>
-            <strong>PIPELINE</strong>
-            <span>Wholesale CRM</span>
-          </div>
-        </div>
-        <nav>
-          <a
-            className={activeView === "dashboard" ? "active" : ""}
-            onClick={() => setActiveView("dashboard")}
-            style={{ cursor: "pointer" }}
-          >
-            <Home size={18} />
-            Dashboard
-          </a>
-          <a
-            className={activeView === "buyers" ? "active" : ""}
-            onClick={() => setActiveView("buyers")}
-            style={{ cursor: "pointer" }}
-          >
-            <Users size={18} />
-            Buyers List
-          </a>
-        </nav>
-        <div className="user-card">
-          <div className="avatar">AJ</div>
-          <div>
-            <strong>Local CRM</strong>
-          </div>
-        </div>
-      </aside>
+      <Sidebar activeView={activeView} setActiveView={setActiveView} />
 
       <main className="main">
         {activeView === "dashboard" ? (
@@ -232,16 +270,6 @@ function Wholesale() {
                   Track and manage your wholesale real estate pipeline locally.
                 </span>
               </div>
-              <button
-                className="primary-btn"
-                onClick={() =>
-                  document
-                    .getElementById("add-property")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                <Plus size={18} /> Add Property
-              </button>
             </header>
 
             <section className="stats-grid">
@@ -258,18 +286,21 @@ function Wholesale() {
               />
               <Stat icon={<RefreshCw />} label="Assigned" value={assignedDeals} />
               <Stat icon={<Star />} label="Closed" value={closedDeals} />
-              <Stat icon={<DollarSign />} label="Gross Revenue" value={currency(totalGrossRevenue)} />
+              <Stat icon={<DollarSign />} label={revenueLabel} value={currency(totalGrossRevenue)} />
             </section>
 
             <Wholesale_form
               addDeal={addDeal}
               form={form}
               handleChange={handleChange}
+              handleBlur={handleBlur}
             />
 
             <Wholesale_filters
               filters={filters}
               states={states}
+              months={months}
+              years={years}
               RefreshCw={RefreshCw}
               setFilters={setFilters}
             />

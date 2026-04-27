@@ -1,6 +1,6 @@
 import { Field, Select } from "./elements";
 
-function Wholesale_form({ addDeal, form, handleChange }) {
+function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
   return (
     <section className="panel" id="add-property">
       <div>
@@ -19,18 +19,21 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             name="address"
             value={form.address}
             onChange={handleChange}
+            required
           />
           <Field
             label="City"
             name="city"
             value={form.city}
             onChange={handleChange}
+            required
           />
           <Field
             label="Zip Code"
             name="zipCode"
             value={form.zipCode}
             onChange={handleChange}
+            required
           />
           <Field
             label="State"
@@ -38,27 +41,34 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             value={form.state}
             onChange={handleChange}
             maxLength="2"
+            required
           />
           <Field
             label="ARV"
             name="arv"
-            type="number"
+            type="text"
             value={form.arv}
             onChange={handleChange}
+            onBlur={handleBlur}
+            required
           />
           <Field
             label="Rehab Cost"
             name="rehabCost"
-            type="number"
+            type="text"
             value={form.rehabCost}
             onChange={handleChange}
+            onBlur={handleBlur}
+            required
           />
           <Field
             label="MAO"
             name="mao"
-            type="number"
+            type="text"
             value={form.mao}
             onChange={handleChange}
+            onBlur={handleBlur}
+            required
           />
           <Select
             label="Offer Status"
@@ -69,6 +79,7 @@ function Wholesale_form({ addDeal, form, handleChange }) {
               "Not Sent",
               "Offer Sent",
             ]}
+            required
           />
           <Field
             label="Offer Date"
@@ -76,6 +87,7 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             type="date"
             value={form.offerDate}
             onChange={handleChange}
+            required
           />
           <Select
             label="Accepted"
@@ -83,6 +95,7 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             value={form.sellerAccepted}
             onChange={handleChange}
             options={["No", "Waiting", "Yes"]}
+            required
           />
           <Select
             label="Assigned"
@@ -90,28 +103,32 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             value={form.assigned}
             onChange={handleChange}
             options={["No", "Yes"]}
+            required
           />
           <Field
             label="Contract Price"
             name="contractPrice"
-            type="number"
+            type="text"
             value={form.contractPrice}
             onChange={handleChange}
+            onBlur={handleBlur}
+            required
           />
-          {form.assigned === "Yes" && (
-            <Field
-              label="Assigned Price"
-              name="assignedPrice"
-              type="number"
-              value={form.assignedPrice}
-              onChange={handleChange}
-            />
-          )}
+          <Field
+            label="Assigned Price"
+            name="assignedPrice"
+            type="text"
+            value={form.assignedPrice}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            required
+          />
           <Field
             label="Notes"
             name="notes"
             value={form.notes}
             onChange={handleChange}
+            required
           />
           <Select
             label="Closed"
@@ -119,7 +136,18 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             value={form.closed}
             onChange={handleChange}
             options={["No", "Yes"]}
+            required
           />
+          {form.closed === "Yes" && (
+            <Select
+              label="Closed In"
+              name="closedInMonth"
+              value={form.closedInMonth}
+              onChange={handleChange}
+              options={["", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]}
+              required
+            />
+          )}
           <button className="primary-btn form-btn" type="submit">
             Save
           </button>

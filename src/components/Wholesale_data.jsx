@@ -1,20 +1,35 @@
 import { ReadOnlyCell, Badge } from "./elements";
-import { Trash2 } from "lucide-react";
+import { Trash2, X, FileText } from "lucide-react";
 import { currency } from "../utils/utils";
+import { useState } from "react";
 
 function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
+  const [selectedDeal, setSelectedDeal] = useState(null);
+  const [notesDraft, setNotesDraft] = useState("");
+
+  const handleRowClick = (deal) => {
+    setSelectedDeal(deal);
+    setNotesDraft(deal.notes || "");
+  };
+
+  const saveNotes = () => {
+    if (selectedDeal) {
+      updateDeal(selectedDeal.id, "notes", notesDraft);
+      setSelectedDeal(null);
+    }
+  };
+
   function updateDeal(id, field, value) {
     // Business Rule: Enforce the "Closed" requirements even on updates
     if (field === "closed" && value === "Yes") {
       const deal = deals.find((d) => d.id === id);
       const canClose =
-        deal.offerStatus === "Accepted" &&
         deal.sellerAccepted === "Yes" &&
         deal.assigned === "Yes";
 
       if (!canClose) {
         alert(
-          "Cannot Close: Offer must be 'Accepted',and 'Assigned' must be 'Yes'.",
+          "Cannot Close: Offer must be 'Accepted', and 'Assigned' must be 'Yes'.",
         );
         return;
       }
@@ -33,6 +48,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
         <table>
           <thead>
             <tr>
+              <th style={{ width: "60px", textAlign: "center" }}>Notes</th>
               <th>Property Address</th>
               <th>City</th>
               <th>Zip Code</th>
@@ -47,12 +63,23 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
               <th>Assigned</th>
               <th>Assigned Price</th>
               <th>Closed</th>
+              <th>Closed In</th>
               <th>Gross Revenue</th>
             </tr>
           </thead>
           <tbody>
             {filteredDeals.map((deal) => (
               <tr key={deal.id}>
+                <td style={{ textAlign: "center" }}>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => handleRowClick(deal)}
+                    style={{ padding: "6px 8px", minWidth: "auto" }}
+                    title="View/Edit Notes"
+                  >
+                    <FileText size={16} />
+                  </button>
+                </td>
                 <ReadOnlyCell value={deal.address} wide />
                 <ReadOnlyCell value={deal.city} />
                 <ReadOnlyCell value={deal.zipCode} />
@@ -138,6 +165,33 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                 </td>
                 <td>
                   {deal.closed === "Yes" ? (
+                    <select
+                      style={{ width: "90px", padding: "4px 8px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-card)" }}
+                      value={deal.closedInMonth || ""}
+                      onChange={(e) =>
+                        updateDeal(deal.id, "closedInMonth", e.target.value)
+                      }
+                    >
+                      <option value="">Month</option>
+                      <option value="01">01</option>
+                      <option value="02">02</option>
+                      <option value="03">03</option>
+                      <option value="04">04</option>
+                      <option value="05">05</option>
+                      <option value="06">06</option>
+                      <option value="07">07</option>
+                      <option value="08">08</option>
+                      <option value="09">09</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                    </select>
+                  ) : (
+                    <span style={{ color: '#9ca3af' }}>—</span>
+                  )}
+                </td>
+                <td>
+                  {deal.closed === "Yes" ? (
                     <strong style={{ color: '#059669' }}>
                       {currency(Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0))}
                     </strong>
@@ -163,6 +217,33 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
       <div className="table-footer">
         Showing {filteredDeals.length} of {deals.length} results
       </div>
+
+      {selectedDeal && (
+        <div className="modal-overlay" onClick={() => setSelectedDeal(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <h2 style={{ marginBottom: 0 }}>Notes for {selectedDeal.address}</h2>
+              <button className="danger-btn" onClick={() => setSelectedDeal(null)} style={{ background: "transparent", color: "var(--muted)", padding: "4px" }}>
+                <X size={20} />
+              </button>
+            </div>
+            <textarea
+              value={notesDraft}
+              onChange={(e) => setNotesDraft(e.target.value)}
+              rows="6"
+              placeholder="Add your notes here..."
+            />
+            <div className="modal-actions">
+              <button className="secondary-btn" onClick={() => setSelectedDeal(null)}>
+                Cancel
+              </button>
+              <button className="primary-btn" onClick={saveNotes}>
+                Save Notes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

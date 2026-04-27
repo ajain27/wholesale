@@ -21,6 +21,7 @@ function BuyerFilters({ filters, states, types, RefreshCw, setFilters }) {
         <label className="search-field">
           <Search size={18} />
           <input
+            id="buyer-search"
             type="text"
             name="search"
             placeholder="Search buyers by name, email, phone, city..."

@@ -7,8 +7,7 @@ import BuyerData from "./BuyerData";
 import { Stat } from "./elements";
 
 const emptyBuyerForm = {
-  firstName: "",
-  lastName: "",
+  fullName: "",
   email: "",
   phone: "",
   city: "",
@@ -38,8 +37,22 @@ function Buyers() {
   function addBuyer(event) {
     event.preventDefault();
 
-    if (!form.fullName?.trim() || !form.email?.trim()) {
-      alert("Please fill out at least Full Name and Email.");
+    if (!form.fullName?.trim() || !form.email?.trim() || !form.state?.trim()) {
+      alert("Please fill out at least Full Name, Email, and State.");
+      return;
+    }
+
+    const newEmail = form.email.trim().toLowerCase();
+    const newPhone = form.phone?.trim();
+
+    const isDuplicate = buyers.some((buyer) => {
+      const emailMatch = buyer.email?.toLowerCase() === newEmail;
+      const phoneMatch = newPhone && buyer.phone === newPhone;
+      return emailMatch || phoneMatch;
+    });
+
+    if (isDuplicate) {
+      alert("A buyer with this email or phone number already exists.");
       return;
     }
 
@@ -55,7 +68,7 @@ function Buyers() {
 
   function deleteBuyer(id) {
     const buyer = buyers.find((item) => item.id === id);
-    if (!window.confirm(`Delete ${buyer?.firstName || "this buyer"}?`)) return;
+    if (!window.confirm(`Delete ${buyer?.fullName || "this buyer"}?`)) return;
     persist(buyers.filter((b) => b.id !== id));
   }
 
