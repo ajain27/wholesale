@@ -12,6 +12,11 @@ function Wholesale_filters({
   return (
     <div>
       <section className="panel board-panel">
+        <div className="panel-header">
+          <div>
+            <h2>Filter Lead</h2>
+          </div>
+        </div>
         <div className="filters">
           <Select
             label="State"

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ReadOnlyCell } from "../elements";
-import { Trash2, Edit2, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, Edit2, Check } from "lucide-react";
+import Pagination from "../pagination/Pagination";
 
 function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
   const [editingEmailId, setEditingEmailId] = useState(null);
@@ -150,45 +151,16 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
         </table>
       </div>
 
-      <div
-        className="table-footer"
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
+      <Pagination
+        currentPage={safePage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
       >
         <div>
           Showing {filteredBuyers.length > 0 ? startIndex + 1 : 0} to {endIndex}{" "}
           of {filteredBuyers.length} results (Total Buyers: {buyers.length})
         </div>
-
-        {totalPages > 1 && (
-          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <button
-              className="secondary-btn"
-              disabled={safePage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              style={{ padding: "6px 10px" }}
-            >
-              <ChevronLeft size={16} /> Prev
-            </button>
-            <span
-              style={{ fontSize: "14px", fontWeight: "500", margin: "0 8px" }}
-            >
-              Page {safePage} of {totalPages}
-            </span>
-            <button
-              className="secondary-btn"
-              disabled={safePage === totalPages}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              style={{ padding: "6px 10px" }}
-            >
-              Next <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
-      </div>
+      </Pagination>
     </>
   );
 }

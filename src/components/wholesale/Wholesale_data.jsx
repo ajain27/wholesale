@@ -1,7 +1,9 @@
 import { ReadOnlyCell, Badge } from "../elements";
-import { Trash2, X, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, FileText } from "lucide-react";
 import { currency } from "../../utils/utils";
 import { useState, useEffect } from "react";
+import Pagination from "../pagination/Pagination";
+import Modal from "../modal/Modal";
 
 function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
   const [selectedDeal, setSelectedDeal] = useState(null);
@@ -261,94 +263,41 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
         </table>
       </div>
 
-      <div
-        className="table-footer"
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "16px",
-        }}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
       >
         <span>
           Showing {currentDeals.length} of {filteredDeals.length} results
         </span>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button
-            className="secondary-btn"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-          >
-            Previous
-          </button>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              margin: "0 8px",
-              color: "var(--muted)",
-            }}
-          >
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="secondary-btn"
-            disabled={currentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-            }
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      </Pagination>
 
-      {selectedDeal && (
-        <div className="modal-overlay" onClick={() => setSelectedDeal(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "16px",
-              }}
+      <Modal
+        isOpen={!!selectedDeal}
+        onClose={() => setSelectedDeal(null)}
+        title={`Notes for ${selectedDeal?.address}`}
+        actions={
+          <>
+            <button
+              className="secondary-btn"
+              onClick={() => setSelectedDeal(null)}
             >
-              <h2 style={{ marginBottom: 0 }}>
-                Notes for {selectedDeal.address}
-              </h2>
-              <button
-                className="danger-btn"
-                onClick={() => setSelectedDeal(null)}
-                style={{
-                  background: "transparent",
-                  color: "var(--muted)",
-                  padding: "4px",
-                }}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <textarea
-              value={notesDraft}
-              onChange={(e) => setNotesDraft(e.target.value)}
-              rows="6"
-              placeholder="Add your notes here..."
-            />
-            <div className="modal-actions">
-              <button
-                className="secondary-btn"
-                onClick={() => setSelectedDeal(null)}
-              >
-                Cancel
-              </button>
-              <button className="primary-btn" onClick={saveNotes}>
-                Save Notes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              Cancel
+            </button>
+            <button className="primary-btn" onClick={saveNotes}>
+              Save Notes
+            </button>
+          </>
+        }
+      >
+        <textarea
+          value={notesDraft}
+          onChange={(e) => setNotesDraft(e.target.value)}
+          rows="6"
+          placeholder="Add your notes here..."
+        />
+      </Modal>
     </>
   );
 }
