@@ -19,7 +19,8 @@ export function GaugeStat({ label, subtitle, value, max, colorTheme }) {
   const circumference = radius * Math.PI;
   // Ensure we don't divide by zero
   const safeMax = max > 0 ? max : 1;
-  const strokeDashoffset = circumference - (Math.min(value, safeMax) / safeMax) * circumference;
+  const strokeDashoffset =
+    circumference - (Math.min(value, safeMax) / safeMax) * circumference;
 
   return (
     <article className={`stat-card gauge-stat theme-${colorTheme}`}>
@@ -37,10 +38,13 @@ export function GaugeStat({ label, subtitle, value, max, colorTheme }) {
             d="M 12,70 A 58,58 0 0,1 128,70"
           />
           <path
-            stroke={colorTheme === 'orange' ? '#fcd34d' : '#86efac'}
+            stroke={colorTheme === "orange" ? "#fcd34d" : "#86efac"}
             strokeWidth={stroke}
             strokeDasharray={`${circumference} ${circumference}`}
-            style={{ strokeDashoffset, transition: 'stroke-dashoffset 0.8s ease-out' }}
+            style={{
+              strokeDashoffset,
+              transition: "stroke-dashoffset 0.8s ease-out",
+            }}
             fill="transparent"
             strokeLinecap="round"
             d="M 12,70 A 58,58 0 0,1 128,70"
@@ -57,7 +61,12 @@ export function GaugeStat({ label, subtitle, value, max, colorTheme }) {
 function Field({ label, required, ...props }) {
   return (
     <label className="field">
-      <span>{label}{required && <span style={{color: 'var(--red)', marginLeft: '4px'}}>*</span>}</span>
+      <span>
+        {label}
+        {required && (
+          <span style={{ color: "var(--red)", marginLeft: "4px" }}>*</span>
+        )}
+      </span>
       <input required={required} id={props.id || props.name} {...props} />
     </label>
   );
@@ -66,7 +75,12 @@ function Field({ label, required, ...props }) {
 function Select({ label, required, options, ...props }) {
   return (
     <label className="field">
-      <span>{label}{required && <span style={{color: 'var(--red)', marginLeft: '4px'}}>*</span>}</span>
+      <span>
+        {label}
+        {required && (
+          <span style={{ color: "var(--red)", marginLeft: "4px" }}>*</span>
+        )}
+      </span>
       <select required={required} id={props.id || props.name} {...props}>
         {options.map((option) => (
           <option key={option} value={option}>

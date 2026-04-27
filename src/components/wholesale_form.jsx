@@ -76,10 +76,7 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             name="offerStatus"
             value={form.offerStatus}
             onChange={handleChange}
-            options={[
-              "Not Sent",
-              "Offer Sent",
-            ]}
+            options={["Not Sent", "Offer Sent"]}
             required
           />
           <Field
@@ -163,7 +160,21 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
               name="closedInMonth"
               value={form.closedInMonth}
               onChange={handleChange}
-              options={["", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]}
+              options={[
+                "",
+                "01",
+                "02",
+                "03",
+                "04",
+                "05",
+                "06",
+                "07",
+                "08",
+                "09",
+                "10",
+                "11",
+                "12",
+              ]}
               required
             />
           )}

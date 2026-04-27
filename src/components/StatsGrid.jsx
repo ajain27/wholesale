@@ -10,16 +10,40 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
   const acceptedOffers = filteredDeals.filter(
     (deal) => deal.sellerAccepted === "Yes",
   ).length;
-  const assignedDeals = filteredDeals.filter((deal) => deal.assigned === "Yes").length;
-  const closedDeals = filteredDeals.filter((deal) => deal.closed === "Yes").length;
-  
+  const assignedDeals = filteredDeals.filter(
+    (deal) => deal.assigned === "Yes",
+  ).length;
+  const closedDeals = filteredDeals.filter(
+    (deal) => deal.closed === "Yes",
+  ).length;
+
   const totalGrossRevenue = filteredDeals
-    .filter((deal) => deal.closed === "Yes" && deal.sellerAccepted === "Yes" && deal.assigned === "Yes")
-    .reduce((total, deal) => total + (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)), 0);
+    .filter(
+      (deal) =>
+        deal.closed === "Yes" &&
+        deal.sellerAccepted === "Yes" &&
+        deal.assigned === "Yes",
+    )
+    .reduce(
+      (total, deal) =>
+        total +
+        (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)),
+      0,
+    );
 
   const monthNames = {
-    "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May", "06": "Jun",
-    "07": "Jul", "08": "Aug", "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+    "01": "Jan",
+    "02": "Feb",
+    "03": "Mar",
+    "04": "Apr",
+    "05": "May",
+    "06": "Jun",
+    "07": "Jul",
+    "08": "Aug",
+    "09": "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec",
   };
   let revenueLabel = "Total Revenue";
   if (filters.closedMonth !== "All" && filters.year !== "All") {
@@ -38,12 +62,12 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
         subtitle="All time"
         value={deals.length}
       />
-      <GaugeStat 
-        label="Offers Made" 
-        subtitle="Current month" 
-        value={offersThisMonth} 
-        max={Math.max(10, offersThisMonth * 2)} 
-        colorTheme="orange" 
+      <GaugeStat
+        label="Offers Made"
+        subtitle="Current month"
+        value={offersThisMonth}
+        max={Math.max(10, offersThisMonth * 2)}
+        colorTheme="orange"
       />
       <GaugeStat
         label="Accepted"
@@ -52,24 +76,24 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
         max={Math.max(5, acceptedOffers * 2)}
         colorTheme="green"
       />
-      <GaugeStat 
-        label="Assigned" 
-        subtitle="All time" 
-        value={assignedDeals} 
-        max={Math.max(10, deals.length)} 
-        colorTheme="orange" 
+      <GaugeStat
+        label="Assigned"
+        subtitle="All time"
+        value={assignedDeals}
+        max={Math.max(10, deals.length)}
+        colorTheme="orange"
       />
-      <GaugeStat 
-        label="Closed" 
-        subtitle="All time" 
-        value={closedDeals} 
-        max={Math.max(10, assignedDeals)} 
-        colorTheme="green" 
+      <GaugeStat
+        label="Closed"
+        subtitle="All time"
+        value={closedDeals}
+        max={Math.max(10, assignedDeals)}
+        colorTheme="green"
       />
-      <SimpleStat 
-        icon={<DollarSign size={20} />} 
-        label={revenueLabel} 
-        value={currency(totalGrossRevenue)} 
+      <SimpleStat
+        icon={<DollarSign size={20} />}
+        label={revenueLabel}
+        value={currency(totalGrossRevenue)}
       />
     </section>
   );

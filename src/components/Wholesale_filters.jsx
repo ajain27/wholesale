@@ -43,9 +43,7 @@ function Wholesale_filters({
           <Select
             label="Year"
             value={filters.year}
-            onChange={(e) =>
-              setFilters({ ...filters, year: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, year: e.target.value })}
             options={years}
           />
           <Select
@@ -54,12 +52,7 @@ function Wholesale_filters({
             onChange={(e) =>
               setFilters({ ...filters, offerStatus: e.target.value })
             }
-            options={[
-              "All",
-              "Offer Sent",
-              "Rejected",
-              "Accepted",
-            ]}
+            options={["All", "Offer Sent", "Rejected", "Accepted"]}
           />
           <Select
             label="Accepted"

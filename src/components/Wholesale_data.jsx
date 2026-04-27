@@ -16,7 +16,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
   const totalPages = Math.ceil(filteredDeals.length / itemsPerPage) || 1;
   const currentDeals = filteredDeals.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const handleRowClick = (deal) => {
@@ -37,9 +37,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
     // Business Rule: Enforce the "Closed" requirements even on updates
     if (field === "closed" && value === "Yes") {
       const deal = deals.find((d) => d.id === id);
-      const canClose =
-        deal.sellerAccepted === "Yes" &&
-        deal.assigned === "Yes";
+      const canClose = deal.sellerAccepted === "Yes" && deal.assigned === "Yes";
 
       if (!canClose) {
         alert(
@@ -134,13 +132,21 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <input
                     type="number"
                     className="readonly-input small"
-                    style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
+                    style={{
+                      background: "var(--input-bg)",
+                      width: "100px",
+                      padding: "0 12px",
+                      border: "1px solid var(--input-border)",
+                      color: "var(--input-text)",
+                    }}
                     defaultValue={deal.contractPrice || ""}
                     disabled={deal.closed === "Yes"}
                     onBlur={(e) => {
                       const val = Number(e.target.value);
                       if (val > deal.arv && deal.arv > 0) {
-                        alert(`Contract price cannot be more than ARV (${currency(deal.arv)}).`);
+                        alert(
+                          `Contract price cannot be more than ARV (${currency(deal.arv)}).`,
+                        );
                         e.target.value = deal.contractPrice || "";
                         return;
                       }
@@ -166,13 +172,25 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     <input
                       type="number"
                       className="readonly-input small"
-                      style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
+                      style={{
+                        background: "var(--input-bg)",
+                        width: "100px",
+                        padding: "0 12px",
+                        border: "1px solid var(--input-border)",
+                        color: "var(--input-text)",
+                      }}
                       defaultValue={deal.assignedPrice || ""}
                       disabled={deal.closed === "Yes"}
                       onBlur={(e) => {
                         const val = Number(e.target.value);
-                        if (val < deal.contractPrice && val > 0 && deal.contractPrice > 0) {
-                          alert(`Assigned price needs to be more than or equal to contract price (${currency(deal.contractPrice)}).`);
+                        if (
+                          val < deal.contractPrice &&
+                          val > 0 &&
+                          deal.contractPrice > 0
+                        ) {
+                          alert(
+                            `Assigned price needs to be more than or equal to contract price (${currency(deal.contractPrice)}).`,
+                          );
                           e.target.value = deal.assignedPrice || "";
                           return;
                         }
@@ -180,17 +198,27 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                       }}
                     />
                   ) : (
-                    <span style={{ color: '#9ca3af' }}>—</span>
+                    <span style={{ color: "#9ca3af" }}>—</span>
                   )}
                 </td>
                 <td>
                   {deal.assigned === "Yes" ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85em', whiteSpace: 'nowrap' }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                        fontSize: "0.85em",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       <strong>{deal.buyerName || "—"}</strong>
-                      <span style={{ color: 'var(--muted)' }}>{deal.buyerEmail || ""}</span>
+                      <span style={{ color: "var(--muted)" }}>
+                        {deal.buyerEmail || ""}
+                      </span>
                     </div>
                   ) : (
-                    <span style={{ color: '#9ca3af' }}>—</span>
+                    <span style={{ color: "#9ca3af" }}>—</span>
                   )}
                 </td>
                 <td>
@@ -208,11 +236,14 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                 </td>
                 <td>
                   {deal.closed === "Yes" ? (
-                    <strong style={{ color: '#059669' }}>
-                      {currency(Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0))}
+                    <strong style={{ color: "#059669" }}>
+                      {currency(
+                        Number(deal.assignedPrice || 0) -
+                          Number(deal.contractPrice || 0),
+                      )}
                     </strong>
                   ) : (
-                    <span style={{ color: '#9ca3af' }}>—</span>
+                    <span style={{ color: "#9ca3af" }}>—</span>
                   )}
                 </td>
                 <td>
@@ -230,23 +261,42 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
         </table>
       </div>
 
-      <div className="table-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px" }}>
-        <span>Showing {currentDeals.length} of {filteredDeals.length} results</span>
+      <div
+        className="table-footer"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "16px",
+        }}
+      >
+        <span>
+          Showing {currentDeals.length} of {filteredDeals.length} results
+        </span>
         <div style={{ display: "flex", gap: "8px" }}>
-          <button 
-            className="secondary-btn" 
+          <button
+            className="secondary-btn"
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
           >
             Previous
           </button>
-          <span style={{ display: "flex", alignItems: "center", margin: "0 8px", color: "var(--muted)" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              margin: "0 8px",
+              color: "var(--muted)",
+            }}
+          >
             Page {currentPage} of {totalPages}
           </span>
-          <button 
-            className="secondary-btn" 
+          <button
+            className="secondary-btn"
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+            }
           >
             Next
           </button>
@@ -256,9 +306,26 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
       {selectedDeal && (
         <div className="modal-overlay" onClick={() => setSelectedDeal(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h2 style={{ marginBottom: 0 }}>Notes for {selectedDeal.address}</h2>
-              <button className="danger-btn" onClick={() => setSelectedDeal(null)} style={{ background: "transparent", color: "var(--muted)", padding: "4px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "16px",
+              }}
+            >
+              <h2 style={{ marginBottom: 0 }}>
+                Notes for {selectedDeal.address}
+              </h2>
+              <button
+                className="danger-btn"
+                onClick={() => setSelectedDeal(null)}
+                style={{
+                  background: "transparent",
+                  color: "var(--muted)",
+                  padding: "4px",
+                }}
+              >
                 <X size={20} />
               </button>
             </div>
@@ -269,7 +336,10 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
               placeholder="Add your notes here..."
             />
             <div className="modal-actions">
-              <button className="secondary-btn" onClick={() => setSelectedDeal(null)}>
+              <button
+                className="secondary-btn"
+                onClick={() => setSelectedDeal(null)}
+              >
                 Cancel
               </button>
               <button className="primary-btn" onClick={saveNotes}>

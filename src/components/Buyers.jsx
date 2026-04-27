@@ -120,14 +120,21 @@ function Buyers({ theme, setTheme }) {
     <>
       <header className="page-header">
         <div>
-          <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>Buyers List</h1>
+          <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>
+            Buyers List
+          </h1>
           <span>
             Manage your network of cash buyers and real estate investors.
           </span>
         </div>
-        <button 
-          className="theme-toggle ghost-btn" 
-          style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0 }}
+        <button
+          className="theme-toggle ghost-btn"
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            flexShrink: 0,
+          }}
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           title="Toggle Theme"
         >
@@ -138,16 +145,16 @@ function Buyers({ theme, setTheme }) {
       <section className="stats-grid">
         <SimpleStat
           icon={<Users size={20} />}
-          label={filters.state === "All" ? "Total Buyers" : `Buyers in ${filters.state}`}
+          label={
+            filters.state === "All"
+              ? "Total Buyers"
+              : `Buyers in ${filters.state}`
+          }
           value={filteredBuyers.length}
         />
       </section>
 
-      <BuyerForm
-        addBuyer={addBuyer}
-        form={form}
-        handleChange={handleChange}
-      />
+      <BuyerForm addBuyer={addBuyer} form={form} handleChange={handleChange} />
 
       <BuyerFilters
         filters={filters}
@@ -156,7 +163,7 @@ function Buyers({ theme, setTheme }) {
         RefreshCw={RefreshCw}
         setFilters={setFilters}
       />
-      
+
       <BuyerData
         filteredBuyers={filteredBuyers}
         buyers={buyers}

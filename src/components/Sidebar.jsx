@@ -4,18 +4,26 @@ import logo from "../assets/logo.png";
 function Sidebar({ activeView, setActiveView, theme, setTheme }) {
   return (
     <aside className="sidebar">
-      <div className="brand" style={{ display: 'flex', justifyContent: 'center', borderBottom: '1px solid var(--line)', paddingBottom: '20px' }}>
-        <img 
-          src={logo} 
-          alt="You Win Estates" 
-          style={{ 
-            width: '100%', 
-            height: 'auto', 
-            display: 'block', 
+      <div
+        className="brand"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          borderBottom: "1px solid var(--line)",
+          paddingBottom: "20px",
+        }}
+      >
+        <img
+          src={logo}
+          alt="You Win Estates"
+          style={{
+            width: "100%",
+            height: "auto",
+            display: "block",
             opacity: 0.95,
-            mixBlendMode: theme === 'dark' ? 'screen' : 'multiply',
-            filter: theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none'
-          }} 
+            mixBlendMode: theme === "dark" ? "screen" : "multiply",
+            filter: theme === "dark" ? "invert(1) hue-rotate(180deg)" : "none",
+          }}
         />
       </div>
       <nav>
@@ -36,7 +44,7 @@ function Sidebar({ activeView, setActiveView, theme, setTheme }) {
           Buyers List
         </a>
       </nav>
-      <div className="user-card" style={{ marginTop: 'auto' }}>
+      <div className="user-card" style={{ marginTop: "auto" }}>
         <div className="avatar">AJ</div>
         <div>
           <strong>Local CRM</strong>

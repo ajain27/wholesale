@@ -10,7 +10,7 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredBuyers.length / itemsPerPage) || 1;
   const safePage = Math.min(currentPage, totalPages);
-  
+
   const startIndex = (safePage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, filteredBuyers.length);
   const paginatedBuyers = filteredBuyers.slice(startIndex, endIndex);
@@ -52,10 +52,23 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                 <ReadOnlyCell value={buyer.fullName} wide />
                 <td>
                   {editingEmailId === buyer.id ? (
-                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                      <input 
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "6px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <input
                         id={`edit-email-${buyer.id}`}
-                        style={{ width: '220px', height: '36px', padding: '0 8px', border: '1px solid var(--blue)', borderRadius: '6px', outline: 'none' }}
+                        style={{
+                          width: "220px",
+                          height: "36px",
+                          padding: "0 8px",
+                          border: "1px solid var(--blue)",
+                          borderRadius: "6px",
+                          outline: "none",
+                        }}
                         value={editEmailValue}
                         onChange={(e) => setEditEmailValue(e.target.value)}
                         autoFocus
@@ -64,14 +77,47 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                           if (e.key === "Escape") setEditingEmailId(null);
                         }}
                       />
-                      <button className="ghost-btn" onClick={() => saveEmail(buyer.id)} style={{ width: '32px', height: '32px', minWidth: '32px', padding: 0 }} title="Save">
+                      <button
+                        className="ghost-btn"
+                        onClick={() => saveEmail(buyer.id)}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          minWidth: "32px",
+                          padding: 0,
+                        }}
+                        title="Save"
+                      >
                         <Check size={16} color="var(--green)" />
                       </button>
                     </div>
                   ) : (
-                    <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                      <input id={`readonly-email-${buyer.id}`} className="readonly-input extra-wide" readOnly value={buyer.email || ""} />
-                      <button className="ghost-btn" onClick={() => startEditingEmail(buyer)} style={{ width: '32px', height: '32px', minWidth: '32px', padding: 0, border: 'none', background: 'transparent' }} title="Edit Email">
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "6px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <input
+                        id={`readonly-email-${buyer.id}`}
+                        className="readonly-input extra-wide"
+                        readOnly
+                        value={buyer.email || ""}
+                      />
+                      <button
+                        className="ghost-btn"
+                        onClick={() => startEditingEmail(buyer)}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          minWidth: "32px",
+                          padding: 0,
+                          border: "none",
+                          background: "transparent",
+                        }}
+                        title="Edit Email"
+                      >
                         <Edit2 size={16} color="var(--muted)" />
                       </button>
                     </div>
@@ -82,7 +128,12 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                   <ReadOnlyCell value={buyer.city} />
                 </td>
                 <td>
-                  <input id={`readonly-phone-${buyer.id}`} className="readonly-input" readOnly value={buyer.phone || ""} />
+                  <input
+                    id={`readonly-phone-${buyer.id}`}
+                    className="readonly-input"
+                    readOnly
+                    value={buyer.phone || ""}
+                  />
                 </td>
                 <td>
                   <button
@@ -99,29 +150,39 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
         </table>
       </div>
 
-      <div className="table-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        className="table-footer"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <div>
-          Showing {filteredBuyers.length > 0 ? startIndex + 1 : 0} to {endIndex} of {filteredBuyers.length} results (Total Buyers: {buyers.length})
+          Showing {filteredBuyers.length > 0 ? startIndex + 1 : 0} to {endIndex}{" "}
+          of {filteredBuyers.length} results (Total Buyers: {buyers.length})
         </div>
-        
+
         {totalPages > 1 && (
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button 
-              className="secondary-btn" 
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              className="secondary-btn"
               disabled={safePage === 1}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              style={{ padding: '6px 10px' }}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              style={{ padding: "6px 10px" }}
             >
               <ChevronLeft size={16} /> Prev
             </button>
-            <span style={{ fontSize: '14px', fontWeight: '500', margin: '0 8px' }}>
+            <span
+              style={{ fontSize: "14px", fontWeight: "500", margin: "0 8px" }}
+            >
               Page {safePage} of {totalPages}
             </span>
-            <button 
-              className="secondary-btn" 
+            <button
+              className="secondary-btn"
               disabled={safePage === totalPages}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              style={{ padding: '6px 10px' }}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              style={{ padding: "6px 10px" }}
             >
               Next <ChevronRight size={16} />
             </button>

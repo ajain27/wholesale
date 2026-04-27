@@ -58,4 +58,11 @@ function monthKey(dateString) {
   return dateString ? dateString.slice(0, 7) : "";
 }
 
-export { normalizeDeal, getSavedDeals, getSavedBuyers, BUYERS_STORAGE_KEY, currency, monthKey };
+export {
+  normalizeDeal,
+  getSavedDeals,
+  getSavedBuyers,
+  BUYERS_STORAGE_KEY,
+  currency,
+  monthKey,
+};

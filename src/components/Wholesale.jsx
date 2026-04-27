@@ -1,20 +1,12 @@
 import { useMemo, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  CheckCircle2,
-  ClipboardList,
-  Home,
-  Plus,
   RefreshCw,
-  Send,
-  Star,
-  DollarSign,
-  Users,
   Moon,
   Sun,
 } from "lucide-react";
 import "../css/styles.css";
-import { getSavedDeals, monthKey, currency, getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
+import { getSavedDeals, getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
 import Wholesale_form from "./wholesale_form";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
@@ -153,19 +145,19 @@ function Wholesale() {
             setForm((prev) => ({ ...prev, [name]: "" }));
             return;
           }
+          if (currentVals.mao > 0 && currentVals.rehabCost > currentVals.mao) {
+            alert("Rehab cost cannot be more than MAO.");
+            setForm((prev) => ({ ...prev, [name]: "" }));
+            return;
+        }
+          if (currentVals.contractPrice > 0 && currentVals.assignedPrice > 0 && currentVals.assignedPrice < currentVals.contractPrice) {
+            alert("Assigned price needs to be more than or equal to contract price.");
+            setForm((prev) => ({ ...prev, [name]: "" }));
+            return;
+          }
         }
 
-        if (currentVals.mao > 0 && currentVals.rehabCost > currentVals.mao) {
-          alert("Rehab cost cannot be more than MAO.");
-          setForm((prev) => ({ ...prev, [name]: "" }));
-          return;
-        }
 
-        if (currentVals.contractPrice > 0 && currentVals.assignedPrice > 0 && currentVals.assignedPrice < currentVals.contractPrice) {
-          alert("Assigned price needs to be more than or equal to contract price.");
-          setForm((prev) => ({ ...prev, [name]: "" }));
-          return;
-        }
 
         const formatted =
           "$" + numVal.toLocaleString("en-US");
