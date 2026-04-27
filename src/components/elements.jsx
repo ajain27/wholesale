@@ -1,11 +1,54 @@
-function Stat({ icon, label, value, hint }) {
+export function SimpleStat({ icon, label, value, subtitle }) {
   return (
-    <article className="stat-card">
-      <div className="stat-icon">{icon}</div>
-      <div>
+    <article className="stat-card simple-stat">
+      <div className="simple-header">
+        <div>
+          <p>{label}</p>
+          {subtitle && <span className="subtitle">{subtitle}</span>}
+        </div>
+        <div className="small-icon">{icon}</div>
+      </div>
+      <strong>{value}</strong>
+    </article>
+  );
+}
+
+export function GaugeStat({ label, subtitle, value, max, colorTheme }) {
+  const radius = 58;
+  const stroke = 12;
+  const circumference = radius * Math.PI;
+  // Ensure we don't divide by zero
+  const safeMax = max > 0 ? max : 1;
+  const strokeDashoffset = circumference - (Math.min(value, safeMax) / safeMax) * circumference;
+
+  return (
+    <article className={`stat-card gauge-stat theme-${colorTheme}`}>
+      <div className="gauge-header">
         <p>{label}</p>
-        <strong>{value}</strong>
-        {hint && <span>{hint}</span>}
+        {subtitle && <span className="subtitle">{subtitle}</span>}
+      </div>
+      <div className="gauge-container">
+        <svg height="80" width="140">
+          <path
+            stroke="rgba(0,0,0,0.15)"
+            strokeWidth={stroke}
+            fill="transparent"
+            strokeLinecap="round"
+            d="M 12,70 A 58,58 0 0,1 128,70"
+          />
+          <path
+            stroke={colorTheme === 'orange' ? '#fcd34d' : '#86efac'}
+            strokeWidth={stroke}
+            strokeDasharray={`${circumference} ${circumference}`}
+            style={{ strokeDashoffset, transition: 'stroke-dashoffset 0.8s ease-out' }}
+            fill="transparent"
+            strokeLinecap="round"
+            d="M 12,70 A 58,58 0 0,1 128,70"
+          />
+        </svg>
+        <div className="gauge-text">
+          <strong className="gauge-val">{value}</strong>
+        </div>
       </div>
     </article>
   );
@@ -55,4 +98,4 @@ function Badge({ value }) {
   return <span className={`badge ${className}`}>{value || "—"}</span>;
 }
 
-export { Stat, Badge, ReadOnlyCell, Select, Field };
+export { Badge, ReadOnlyCell, Select, Field };

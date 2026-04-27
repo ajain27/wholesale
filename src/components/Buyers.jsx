@@ -4,7 +4,7 @@ import { getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
 import BuyerForm from "./BuyerForm";
 import BuyerFilters from "./BuyerFilters";
 import BuyerData from "./BuyerData";
-import { Stat } from "./elements";
+import { SimpleStat } from "./elements";
 
 const emptyBuyerForm = {
   fullName: "",
@@ -136,8 +136,8 @@ function Buyers({ theme, setTheme }) {
       </header>
 
       <section className="stats-grid">
-        <Stat
-          icon={<Users />}
+        <SimpleStat
+          icon={<Users size={20} />}
           label={filters.state === "All" ? "Total Buyers" : `Buyers in ${filters.state}`}
           value={filteredBuyers.length}
         />

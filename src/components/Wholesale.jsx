@@ -16,7 +16,7 @@ import {
 import "../css/styles.css";
 import { getSavedDeals, monthKey, currency } from "../utils/utils";
 import Wholesale_form from "./wholesale_form";
-import { Stat } from "./elements";
+import { SimpleStat, GaugeStat } from "./elements";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
 import Buyers from "./Buyers";
@@ -277,9 +277,9 @@ function Wholesale() {
           <>
             <header className="page-header">
               <div>
-                <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>YOU WIN ESTATES</h1>
+                <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>Lead Pipeline</h1>
                 <span>
-                  Track and manage your wholesale real estate pipeline locally.
+                  Track and manage your real estate leads and deals locally.
                 </span>
               </div>
               <button 
@@ -293,20 +293,45 @@ function Wholesale() {
             </header>
 
             <section className="stats-grid">
-              <Stat
-                icon={<ClipboardList />}
+              <SimpleStat
+                icon={<ClipboardList size={20} />}
                 label="Total Deals"
+                subtitle="All time"
                 value={deals.length}
               />
-              <Stat icon={<Send />} label="Offers Made" value={offersThisMonth} />
-              <Stat
-                icon={<CheckCircle2 />}
-                label="Accepted"
-                value={acceptedOffers}
+              <GaugeStat 
+                label="Offers Made" 
+                subtitle="Current month" 
+                value={offersThisMonth} 
+                max={Math.max(10, offersThisMonth * 2)} 
+                colorTheme="orange" 
               />
-              <Stat icon={<RefreshCw />} label="Assigned" value={assignedDeals} />
-              <Stat icon={<Star />} label="Closed" value={closedDeals} />
-              <Stat icon={<DollarSign />} label={revenueLabel} value={currency(totalGrossRevenue)} />
+              <GaugeStat
+                label="Accepted"
+                subtitle="Current month"
+                value={acceptedOffers}
+                max={Math.max(5, acceptedOffers * 2)}
+                colorTheme="green"
+              />
+              <GaugeStat 
+                label="Assigned" 
+                subtitle="All time" 
+                value={assignedDeals} 
+                max={Math.max(10, deals.length)} 
+                colorTheme="orange" 
+              />
+              <GaugeStat 
+                label="Closed" 
+                subtitle="All time" 
+                value={closedDeals} 
+                max={Math.max(10, assignedDeals)} 
+                colorTheme="green" 
+              />
+              <SimpleStat 
+                icon={<DollarSign size={20} />} 
+                label={revenueLabel} 
+                value={currency(totalGrossRevenue)} 
+              />
             </section>
 
             <Wholesale_form
