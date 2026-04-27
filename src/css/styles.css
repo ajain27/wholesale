@@ -340,7 +340,7 @@ td {
   border: transparent;
   border-radius: 8px;
   background: transparent;
-  padding: 0 12px;
+  padding: 0;
   color: #111827;
   opacity: 1;
 }

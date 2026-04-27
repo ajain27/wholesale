@@ -119,7 +119,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <input
                     type="number"
                     className="readonly-input small"
-                    style={{ background: '#fff', width: '100px' }}
+                    style={{ background: '#fff', width: '100px', padding: '0 12px' }}
                     value={deal.contractPrice || ""}
                     onChange={(e) => updateDeal(deal.id, "contractPrice", e.target.value)}
                   />
@@ -141,7 +141,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     <input
                       type="number"
                       className="readonly-input small"
-                      style={{ background: '#fff', width: '100px' }}
+                      style={{ background: '#fff', width: '100px', padding: '0 12px' }}
                       value={deal.assignedPrice || ""}
                       onChange={(e) =>
                         updateDeal(deal.id, "assignedPrice", e.target.value)
