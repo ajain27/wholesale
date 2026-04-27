@@ -88,7 +88,7 @@ nav a.active {
     gap: 16px;
   }
   .user-card {
-    margin-top: 0;
+    display: none;
   }
   nav {
     display: flex;
@@ -112,9 +112,6 @@ nav a.active {
     gap: 16px;
   }
   .brand {
-    justify-content: center;
-  }
-  .user-card {
     justify-content: center;
   }
   nav {
