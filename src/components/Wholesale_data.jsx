@@ -1,11 +1,23 @@
 import { ReadOnlyCell, Badge } from "./elements";
 import { Trash2, X, FileText } from "lucide-react";
 import { currency } from "../utils/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [notesDraft, setNotesDraft] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredDeals]);
+
+  const totalPages = Math.ceil(filteredDeals.length / itemsPerPage) || 1;
+  const currentDeals = filteredDeals.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleRowClick = (deal) => {
     setSelectedDeal(deal);
@@ -20,6 +32,16 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
   };
 
   function updateDeal(id, field, value) {
+    const deal = deals.find((d) => d.id === id);
+
+    if (["contractPrice", "assignedPrice"].includes(field)) {
+      const numValue = Number(value);
+      if (!isNaN(numValue) && numValue > deal.arv) {
+        alert(`${field === "contractPrice" ? "Contract" : "Assigned"} Price cannot be more than ARV (${currency(deal.arv)}).`);
+        return;
+      }
+    }
+
     // Business Rule: Enforce the "Closed" requirements even on updates
     if (field === "closed" && value === "Yes") {
       const deal = deals.find((d) => d.id === id);
@@ -63,12 +85,11 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
               <th>Assigned</th>
               <th>Assigned Price</th>
               <th>Closed</th>
-              <th>Closed In</th>
               <th>Gross Revenue</th>
             </tr>
           </thead>
           <tbody>
-            {filteredDeals.map((deal) => (
+            {currentDeals.map((deal) => (
               <tr key={deal.id}>
                 <td style={{ textAlign: "center" }}>
                   <button
@@ -91,6 +112,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <select
                     className={`badge ${deal.offerStatus?.toLowerCase()?.replaceAll(" ", "-")}`}
                     value={deal.offerStatus}
+                    disabled={deal.closed === "Yes"}
                     onChange={(e) =>
                       updateDeal(deal.id, "offerStatus", e.target.value)
                     }
@@ -121,6 +143,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     className="readonly-input small"
                     style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
                     value={deal.contractPrice || ""}
+                    disabled={deal.closed === "Yes"}
                     onChange={(e) => updateDeal(deal.id, "contractPrice", e.target.value)}
                   />
                 </td>
@@ -128,6 +151,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <select
                     className={`badge ${deal.assigned?.toLowerCase()}`}
                     value={deal.assigned}
+                    disabled={deal.closed === "Yes"}
                     onChange={(e) =>
                       updateDeal(deal.id, "assigned", e.target.value)
                     }
@@ -143,6 +167,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                       className="readonly-input small"
                       style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
                       value={deal.assignedPrice || ""}
+                      disabled={deal.closed === "Yes"}
                       onChange={(e) =>
                         updateDeal(deal.id, "assignedPrice", e.target.value)
                       }
@@ -155,6 +180,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <select
                     className={`badge ${deal.closed?.toLowerCase()}`}
                     value={deal.closed}
+                    disabled={deal.closed === "Yes"}
                     onChange={(e) =>
                       updateDeal(deal.id, "closed", e.target.value)
                     }
@@ -162,33 +188,6 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
-                </td>
-                <td>
-                  {deal.closed === "Yes" ? (
-                    <select
-                      style={{ width: "90px", padding: "4px 8px", borderRadius: "6px", border: "1px solid var(--input-border)", background: "var(--input-bg)", color: "var(--input-text)" }}
-                      value={deal.closedInMonth || ""}
-                      onChange={(e) =>
-                        updateDeal(deal.id, "closedInMonth", e.target.value)
-                      }
-                    >
-                      <option value="">Month</option>
-                      <option value="01">01</option>
-                      <option value="02">02</option>
-                      <option value="03">03</option>
-                      <option value="04">04</option>
-                      <option value="05">05</option>
-                      <option value="06">06</option>
-                      <option value="07">07</option>
-                      <option value="08">08</option>
-                      <option value="09">09</option>
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                    </select>
-                  ) : (
-                    <span style={{ color: '#9ca3af' }}>—</span>
-                  )}
                 </td>
                 <td>
                   {deal.closed === "Yes" ? (
@@ -214,8 +213,27 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
         </table>
       </div>
 
-      <div className="table-footer">
-        Showing {filteredDeals.length} of {deals.length} results
+      <div className="table-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px" }}>
+        <span>Showing {currentDeals.length} of {filteredDeals.length} results</span>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button 
+            className="secondary-btn" 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+          >
+            Previous
+          </button>
+          <span style={{ display: "flex", alignItems: "center", margin: "0 8px", color: "var(--muted)" }}>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            className="secondary-btn" 
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {selectedDeal && (

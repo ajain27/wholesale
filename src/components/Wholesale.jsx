@@ -93,6 +93,19 @@ function Wholesale() {
       }
     }
 
+    const currencyFields = [
+      "arv",
+      "rehabCost",
+      "mao",
+      "contractPrice",
+      "assignedPrice",
+    ];
+    if (currencyFields.includes(name)) {
+      const cleaned = value.replace(/[^0-9$,]/g, "");
+      setForm((prev) => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -130,6 +143,15 @@ function Wholesale() {
     }
 
     const parseNumber = (val) => Number(String(val).replace(/[^0-9]/g, ""));
+    const arvNum = parseNumber(form.arv);
+    const maoNum = parseNumber(form.mao);
+    const contractNum = parseNumber(form.contractPrice);
+    const assignedNum = parseNumber(form.assignedPrice);
+
+    if (maoNum > arvNum || contractNum > arvNum || assignedNum > arvNum) {
+      alert("MAO, Contract Price, and Assigned Price cannot be more than ARV.");
+      return;
+    }
 
     const newDeal = {
       ...form,
