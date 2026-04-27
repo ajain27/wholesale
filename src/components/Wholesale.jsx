@@ -8,13 +8,16 @@ import {
   RefreshCw,
   Send,
   Star,
+  DollarSign,
+  Users,
 } from "lucide-react";
 import "../css/styles.css";
-import { getSavedDeals, monthKey } from "../utils/utils";
+import { getSavedDeals, monthKey, currency } from "../utils/utils";
 import Wholesale_form from "./wholesale_form";
 import { Stat } from "./elements";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
+import Buyers from "./Buyers";
 
 const emptyForm = {
   address: "",
@@ -27,7 +30,9 @@ const emptyForm = {
   offerStatus: "Not Sent",
   offerDate: "",
   sellerAccepted: "No",
+  contractPrice: "",
   assigned: "No",
+  assignedPrice: "",
   notes: "",
   closed: "No",
 };
@@ -35,6 +40,7 @@ const emptyForm = {
 const STORAGE_KEY = "wholesale-real-estate-crm-v2";
 
 function Wholesale() {
+  const [activeView, setActiveView] = useState("dashboard");
   const [deals, setDeals] = useState(getSavedDeals);
   const [form, setForm] = useState(emptyForm);
   const [filters, setFilters] = useState({
@@ -93,6 +99,8 @@ function Wholesale() {
       arv: Number(form.arv || 0),
       rehabCost: Number(form.rehabCost || 0),
       mao: Number(form.mao || 0),
+      contractPrice: Number(form.contractPrice || 0),
+      assignedPrice: Number(form.assignedPrice || 0),
     };
 
     // Push to end of array to show at the bottom
@@ -171,6 +179,10 @@ function Wholesale() {
   ).length;
   const assignedDeals = deals.filter((deal) => deal.assigned === "Yes").length;
   const closedDeals = deals.filter((deal) => deal.closed === "Yes").length;
+  
+  const totalGrossRevenue = deals
+    .filter((deal) => deal.closed === "Yes" && deal.sellerAccepted === "Yes" && deal.assigned === "Yes")
+    .reduce((total, deal) => total + (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)), 0);
 
   return (
     <div className="layout">
@@ -185,9 +197,21 @@ function Wholesale() {
           </div>
         </div>
         <nav>
-          <a className="active">
+          <a
+            className={activeView === "dashboard" ? "active" : ""}
+            onClick={() => setActiveView("dashboard")}
+            style={{ cursor: "pointer" }}
+          >
             <Home size={18} />
             Dashboard
+          </a>
+          <a
+            className={activeView === "buyers" ? "active" : ""}
+            onClick={() => setActiveView("buyers")}
+            style={{ cursor: "pointer" }}
+          >
+            <Users size={18} />
+            Buyers List
           </a>
         </nav>
         <div className="user-card">
@@ -199,59 +223,66 @@ function Wholesale() {
       </aside>
 
       <main className="main">
-        <header className="page-header">
-          <div>
-            <h1 style={{ color: "#1769e8" }}>YOU WIN ESTATES</h1>
-            <span>
-              Track and manage your wholesale real estate pipeline locally.
-            </span>
-          </div>
-          <button
-            className="primary-btn"
-            onClick={() =>
-              document
-                .getElementById("add-property")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <Plus size={18} /> Add Property
-          </button>
-        </header>
+        {activeView === "dashboard" ? (
+          <>
+            <header className="page-header">
+              <div>
+                <h1 style={{ color: "#1769e8" }}>YOU WIN ESTATES</h1>
+                <span>
+                  Track and manage your wholesale real estate pipeline locally.
+                </span>
+              </div>
+              <button
+                className="primary-btn"
+                onClick={() =>
+                  document
+                    .getElementById("add-property")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                <Plus size={18} /> Add Property
+              </button>
+            </header>
 
-        <section className="stats-grid">
-          <Stat
-            icon={<ClipboardList />}
-            label="Total Deals"
-            value={deals.length}
-          />
-          <Stat icon={<Send />} label="Offers Made" value={offersThisMonth} />
-          <Stat
-            icon={<CheckCircle2 />}
-            label="Accepted"
-            value={acceptedOffers}
-          />
-          <Stat icon={<RefreshCw />} label="Assigned" value={assignedDeals} />
-          <Stat icon={<Star />} label="Closed" value={closedDeals} />
-        </section>
+            <section className="stats-grid">
+              <Stat
+                icon={<ClipboardList />}
+                label="Total Deals"
+                value={deals.length}
+              />
+              <Stat icon={<Send />} label="Offers Made" value={offersThisMonth} />
+              <Stat
+                icon={<CheckCircle2 />}
+                label="Accepted"
+                value={acceptedOffers}
+              />
+              <Stat icon={<RefreshCw />} label="Assigned" value={assignedDeals} />
+              <Stat icon={<Star />} label="Closed" value={closedDeals} />
+              <Stat icon={<DollarSign />} label="Gross Revenue" value={currency(totalGrossRevenue)} />
+            </section>
 
-        <Wholesale_form
-          addDeal={addDeal}
-          form={form}
-          handleChange={handleChange}
-        />
+            <Wholesale_form
+              addDeal={addDeal}
+              form={form}
+              handleChange={handleChange}
+            />
 
-        <Wholesale_filters
-          filters={filters}
-          states={states}
-          RefreshCw={RefreshCw}
-          setFilters={setFilters}
-        />
-        <Wholesale_data
-          filteredDeals={filteredDeals}
-          deals={deals}
-          deleteDeal={deleteDeal}
-          persist={persist}
-        />
+            <Wholesale_filters
+              filters={filters}
+              states={states}
+              RefreshCw={RefreshCw}
+              setFilters={setFilters}
+            />
+            <Wholesale_data
+              filteredDeals={filteredDeals}
+              deals={deals}
+              deleteDeal={deleteDeal}
+              persist={persist}
+            />
+          </>
+        ) : (
+          <Buyers />
+        )}
       </main>
     </div>
   );

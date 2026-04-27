@@ -43,8 +43,11 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
               <th>Offer Status</th>
               <th>Offer Date</th>
               <th>Accepted</th>
+              <th>Contract Price</th>
               <th>Assigned</th>
+              <th>Assigned Price</th>
               <th>Closed</th>
+              <th>Gross Revenue</th>
             </tr>
           </thead>
           <tbody>
@@ -58,7 +61,20 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                 <ReadOnlyCell value={currency(deal.rehabCost)} />
                 <ReadOnlyCell value={currency(deal.mao)} />
                 <td>
-                  <Badge value={deal.offerStatus} />
+                  <select
+                    className={`badge ${deal.offerStatus?.toLowerCase()?.replaceAll(" ", "-")}`}
+                    value={deal.offerStatus}
+                    onChange={(e) =>
+                      updateDeal(deal.id, "offerStatus", e.target.value)
+                    }
+                  >
+                    <option value="Not Sent">Not Sent</option>
+                    <option value="Offer Sent">Offer Sent</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Closed">Closed</option>
+                  </select>
                 </td>
                 <ReadOnlyCell
                   value={
@@ -73,11 +89,44 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <Badge value={deal.sellerAccepted} />
                 </td>
                 <td>
-                  <Badge value={deal.assigned} />
+                  <input
+                    type="number"
+                    className="readonly-input small"
+                    style={{ background: '#fff', width: '100px' }}
+                    value={deal.contractPrice || ""}
+                    onChange={(e) => updateDeal(deal.id, "contractPrice", e.target.value)}
+                  />
                 </td>
                 <td>
                   <select
-                    className={`badge ${deal.closed.toLowerCase()}`}
+                    className={`badge ${deal.assigned?.toLowerCase()}`}
+                    value={deal.assigned}
+                    onChange={(e) =>
+                      updateDeal(deal.id, "assigned", e.target.value)
+                    }
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </td>
+                <td>
+                  {deal.assigned === "Yes" ? (
+                    <input
+                      type="number"
+                      className="readonly-input small"
+                      style={{ background: '#fff', width: '100px' }}
+                      value={deal.assignedPrice || ""}
+                      onChange={(e) =>
+                        updateDeal(deal.id, "assignedPrice", e.target.value)
+                      }
+                    />
+                  ) : (
+                    <span style={{ color: '#9ca3af' }}>—</span>
+                  )}
+                </td>
+                <td>
+                  <select
+                    className={`badge ${deal.closed?.toLowerCase()}`}
                     value={deal.closed}
                     onChange={(e) =>
                       updateDeal(deal.id, "closed", e.target.value)
@@ -86,6 +135,15 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
+                </td>
+                <td>
+                  {deal.closed === "Yes" ? (
+                    <strong style={{ color: '#059669' }}>
+                      {currency(Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0))}
+                    </strong>
+                  ) : (
+                    <span style={{ color: '#9ca3af' }}>—</span>
+                  )}
                 </td>
                 <td>
                   <button

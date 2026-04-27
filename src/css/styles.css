@@ -165,8 +165,8 @@ p {
   white-space: nowrap;
 }
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(165px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 18px;
   margin-bottom: 22px;
 }
@@ -179,6 +179,11 @@ p {
   align-items: center;
   gap: 22px;
   box-shadow: var(--shadow);
+  flex: 1 1 165px;
+}
+.stat-card:nth-child(6) {
+  flex: 1 1 348px;
+  max-width: 100%;
 }
 .stat-icon {
   width: 66px;
@@ -229,9 +234,12 @@ p {
 .add-form {
   padding: 22px 24px 24px;
   display: grid;
-  grid-template-columns: 2fr 1.2fr 1fr 0.8fr repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px 16px;
   align-items: end;
+}
+.add-form .field:first-of-type {
+  grid-column: span 2;
 }
 .field {
   display: grid;
@@ -263,7 +271,9 @@ p {
 }
 .form-btn {
   height: 44px;
-  align-self: end;
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-width: 200px;
 }
 .board-panel {
   overflow: hidden;
@@ -419,10 +429,6 @@ td {
     min-width: 120px;
     white-space: nowrap;
   }
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .add-form,
   .filters {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -431,15 +437,20 @@ td {
   }
 }
 @media (max-width: 800px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .add-form,
   .filters {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (max-width: 600px) {
+  .stat-card {
+    flex: 1 1 100%;
+  }
+  .add-form .field:first-of-type {
+    grid-column: span 1;
+  }
+  .form-btn {
+    width: 100%;
+  }
   .main {
     padding: 24px 16px;
   }
@@ -465,8 +476,6 @@ td {
   nav {
     flex-direction: column;
   }
-  .stats-grid,
-  .add-form,
   .filters {
     grid-template-columns: 1fr;
   }

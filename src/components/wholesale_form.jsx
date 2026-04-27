@@ -68,10 +68,6 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             options={[
               "Not Sent",
               "Offer Sent",
-              "Under Review",
-              "Rejected",
-              "Accepted",
-              "Closed",
             ]}
           />
           <Field
@@ -86,7 +82,7 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             name="sellerAccepted"
             value={form.sellerAccepted}
             onChange={handleChange}
-            options={["No", "Maybe", "Yes"]}
+            options={["No", "Waiting", "Yes"]}
           />
           <Select
             label="Assigned"
@@ -95,6 +91,22 @@ function Wholesale_form({ addDeal, form, handleChange }) {
             onChange={handleChange}
             options={["No", "Yes"]}
           />
+          <Field
+            label="Contract Price"
+            name="contractPrice"
+            type="number"
+            value={form.contractPrice}
+            onChange={handleChange}
+          />
+          {form.assigned === "Yes" && (
+            <Field
+              label="Assigned Price"
+              name="assignedPrice"
+              type="number"
+              value={form.assignedPrice}
+              onChange={handleChange}
+            />
+          )}
           <Field
             label="Notes"
             name="notes"
