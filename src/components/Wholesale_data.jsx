@@ -76,6 +76,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
               <th>Contract Price</th>
               <th>Assigned</th>
               <th>Assigned Price</th>
+              <th>Buyer Info</th>
               <th>Closed</th>
               <th>Gross Revenue</th>
             </tr>
@@ -178,6 +179,16 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                         updateDeal(deal.id, "assignedPrice", e.target.value);
                       }}
                     />
+                  ) : (
+                    <span style={{ color: '#9ca3af' }}>—</span>
+                  )}
+                </td>
+                <td>
+                  {deal.assigned === "Yes" ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85em', whiteSpace: 'nowrap' }}>
+                      <strong>{deal.buyerName || "—"}</strong>
+                      <span style={{ color: 'var(--muted)' }}>{deal.buyerEmail || ""}</span>
+                    </div>
                   ) : (
                     <span style={{ color: '#9ca3af' }}>—</span>
                   )}

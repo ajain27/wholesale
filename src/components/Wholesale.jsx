@@ -14,13 +14,13 @@ import {
   Sun,
 } from "lucide-react";
 import "../css/styles.css";
-import { getSavedDeals, monthKey, currency } from "../utils/utils";
+import { getSavedDeals, monthKey, currency, getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
 import Wholesale_form from "./wholesale_form";
-import { SimpleStat, GaugeStat } from "./elements";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
 import Buyers from "./Buyers";
 import Sidebar from "./Sidebar";
+import StatsGrid from "./StatsGrid";
 
 const emptyForm = {
   address: "",
@@ -36,6 +36,8 @@ const emptyForm = {
   contractPrice: "",
   assigned: "No",
   assignedPrice: "",
+  buyerName: "",
+  buyerEmail: "",
   notes: "",
   closed: "No",
   closedInMonth: "",
@@ -210,9 +212,30 @@ function Wholesale() {
       rehabCost: parseNumber(form.rehabCost),
       mao: parseNumber(form.mao),
       contractPrice: parseNumber(form.contractPrice),
-      // assignedPrice: parseNumber(form.assignedPrice),
+      assignedPrice: parseNumber(form.assignedPrice),
+      buyerName: form.buyerName?.trim() || "",
+      buyerEmail: form.buyerEmail?.trim().toLowerCase() || "",
       closedInMonth: form.closedInMonth || "",
     };
+
+    if (form.assigned === "Yes" && form.buyerEmail?.trim() && form.buyerName?.trim()) {
+      const existingBuyers = getSavedBuyers();
+      const newEmail = form.buyerEmail.trim().toLowerCase();
+      
+      const isDuplicate = existingBuyers.some((b) => b.email?.toLowerCase() === newEmail);
+      if (!isDuplicate) {
+        const newBuyer = {
+          id: crypto.randomUUID(),
+          fullName: form.buyerName.trim(),
+          email: newEmail,
+          phone: "",
+          city: form.city.trim(),
+          state: form.state.trim().toUpperCase(),
+          realEstateType: "Single Family",
+        };
+        localStorage.setItem(BUYERS_STORAGE_KEY, JSON.stringify([...existingBuyers, newBuyer]));
+      }
+    }
 
     // Push to end of array to show at the bottom
     persist([...deals, newDeal]);
@@ -311,33 +334,6 @@ function Wholesale() {
     });
   }, [deals, filters]);
 
-  const currentMonth = new Date().toISOString().slice(0, 7);
-  const offersThisMonth = filteredDeals.filter(
-    (deal) => deal.offerDate && monthKey(deal.offerDate) === currentMonth,
-  ).length;
-  const acceptedOffers = filteredDeals.filter(
-    (deal) => deal.sellerAccepted === "Yes",
-  ).length;
-  const assignedDeals = filteredDeals.filter((deal) => deal.assigned === "Yes").length;
-  const closedDeals = filteredDeals.filter((deal) => deal.closed === "Yes").length;
-  
-  const totalGrossRevenue = filteredDeals
-    .filter((deal) => deal.closed === "Yes" && deal.sellerAccepted === "Yes" && deal.assigned === "Yes")
-    .reduce((total, deal) => total + (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)), 0);
-
-  const monthNames = {
-    "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May", "06": "Jun",
-    "07": "Jul", "08": "Aug", "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
-  };
-  let revenueLabel = "Total Revenue";
-  if (filters.closedMonth !== "All" && filters.year !== "All") {
-    revenueLabel = `${monthNames[filters.closedMonth]} ${filters.year} Revenue`;
-  } else if (filters.closedMonth !== "All") {
-    revenueLabel = `${monthNames[filters.closedMonth]} Revenue`;
-  } else if (filters.year !== "All") {
-    revenueLabel = `${filters.year} Revenue`;
-  }
-
   return (
     <div className="layout">
       <Sidebar activeView={activeView} setActiveView={setActiveView} theme={theme} setTheme={setTheme} />
@@ -362,47 +358,7 @@ function Wholesale() {
               </button>
             </header>
 
-            <section className="stats-grid">
-              <SimpleStat
-                icon={<ClipboardList size={20} />}
-                label="Total Deals"
-                subtitle="All time"
-                value={deals.length}
-              />
-              <GaugeStat 
-                label="Offers Made" 
-                subtitle="Current month" 
-                value={offersThisMonth} 
-                max={Math.max(10, offersThisMonth * 2)} 
-                colorTheme="orange" 
-              />
-              <GaugeStat
-                label="Accepted"
-                subtitle="Current month"
-                value={acceptedOffers}
-                max={Math.max(5, acceptedOffers * 2)}
-                colorTheme="green"
-              />
-              <GaugeStat 
-                label="Assigned" 
-                subtitle="All time" 
-                value={assignedDeals} 
-                max={Math.max(10, deals.length)} 
-                colorTheme="orange" 
-              />
-              <GaugeStat 
-                label="Closed" 
-                subtitle="All time" 
-                value={closedDeals} 
-                max={Math.max(10, assignedDeals)} 
-                colorTheme="green" 
-              />
-              <SimpleStat 
-                icon={<DollarSign size={20} />} 
-                label={revenueLabel} 
-                value={currency(totalGrossRevenue)} 
-              />
-            </section>
+            <StatsGrid deals={deals} filteredDeals={filteredDeals} filters={filters} />
 
             <Wholesale_form
               addDeal={addDeal}

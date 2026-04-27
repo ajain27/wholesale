@@ -123,6 +123,25 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             onBlur={handleBlur}
             required={form.assigned === "Yes"}
           />
+          {form.assigned === "Yes" && (
+            <>
+              <Field
+                label="Buyer Name / LLC"
+                name="buyerName"
+                value={form.buyerName || ""}
+                onChange={handleChange}
+                required
+              />
+              <Field
+                label="Buyer Email"
+                name="buyerEmail"
+                type="email"
+                value={form.buyerEmail || ""}
+                onChange={handleChange}
+                required
+              />
+            </>
+          )}
           <Field
             label="Notes"
             name="notes"
