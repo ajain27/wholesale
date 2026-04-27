@@ -1,7 +1,7 @@
-import { Search } from "lucide-react";
-import { Select } from "./elements";
+import { Search, RefreshCw } from "lucide-react";
+import { Select } from "../elements";
 
-function BuyerFilters({ filters, states, types, RefreshCw, setFilters }) {
+function BuyerFilters({ filters, states, types, setFilters }) {
   const handleFilter = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));

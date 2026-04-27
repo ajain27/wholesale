@@ -5,13 +5,13 @@ import {
   Moon,
   Sun,
 } from "lucide-react";
-import "../css/styles.css";
-import { getSavedDeals, getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
+import "../../css/styles.css";
+import { getSavedDeals, getSavedBuyers, BUYERS_STORAGE_KEY } from "../../utils/utils";
 import Wholesale_form from "./wholesale_form";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
-import Buyers from "./Buyers";
-import Sidebar from "./Sidebar";
+import Buyers from "../buyers/Buyers";
+import Sidebar from "../Sidebar";
 import StatsGrid from "./StatsGrid";
 
 const emptyForm = {

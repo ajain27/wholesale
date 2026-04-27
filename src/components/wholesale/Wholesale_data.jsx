@@ -1,6 +1,6 @@
-import { ReadOnlyCell, Badge } from "./elements";
-import { Trash2, X, FileText } from "lucide-react";
-import { currency } from "../utils/utils";
+import { ReadOnlyCell, Badge } from "../elements";
+import { Trash2, X, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { currency } from "../../utils/utils";
 import { useState, useEffect } from "react";
 
 function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {

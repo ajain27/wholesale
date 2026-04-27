@@ -1,5 +1,5 @@
-import { Search } from "lucide-react";
-import { Select } from "./elements";
+import { Search, Plus } from "lucide-react";
+import { Select } from "../elements";
 
 function Wholesale_filters({
   filters,

@@ -1,6 +1,6 @@
-import { SimpleStat, GaugeStat } from "./elements";
+import { SimpleStat, GaugeStat } from "../elements";
 import { ClipboardList, DollarSign } from "lucide-react";
-import { currency, monthKey } from "../utils/utils";
+import { currency, monthKey } from "../../utils/utils";
 
 export default function StatsGrid({ deals, filteredDeals, filters }) {
   const currentMonth = new Date().toISOString().slice(0, 7);

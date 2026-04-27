@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ReadOnlyCell } from "./elements";
+import { ReadOnlyCell } from "../elements";
 import { Trash2, Edit2, Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {

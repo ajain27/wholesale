@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { RefreshCw, Plus, Users, Sun, Moon } from "lucide-react";
-import { getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
+import { getSavedBuyers, BUYERS_STORAGE_KEY } from "../../utils/utils";
 import BuyerForm from "./BuyerForm";
 import BuyerFilters from "./BuyerFilters";
 import BuyerData from "./BuyerData";
-import { SimpleStat } from "./elements";
+import { SimpleStat } from "../elements";
 
 const emptyBuyerForm = {
   fullName: "",

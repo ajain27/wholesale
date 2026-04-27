@@ -1,4 +1,4 @@
-import { Field, Select } from "./elements";
+import { Field, Select } from "../elements";
 
 function BuyerForm({ addBuyer, form, handleChange }) {
   return (
