@@ -10,7 +10,6 @@ function BuyerFilters({ filters, states, types, RefreshCw, setFilters }) {
   const clearFilters = () => {
     setFilters({
       state: "All",
-      realEstateType: "All",
       search: "",
     });
   };
@@ -35,13 +34,6 @@ function BuyerFilters({ filters, states, types, RefreshCw, setFilters }) {
           value={filters.state}
           onChange={handleFilter}
           options={states}
-        />
-        <Select
-          label="Filter by Type"
-          name="realEstateType"
-          value={filters.realEstateType}
-          onChange={handleFilter}
-          options={types}
         />
         <button className="secondary-btn" onClick={clearFilters}>
           <RefreshCw size={16} /> Clear Filters

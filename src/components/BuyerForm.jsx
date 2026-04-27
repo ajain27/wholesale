@@ -46,19 +46,6 @@ function BuyerForm({ addBuyer, form, handleChange }) {
             maxLength="2"
             required
           />
-          <Select
-            label="Type of Real Estate"
-            name="realEstateType"
-            value={form.realEstateType}
-            onChange={handleChange}
-            options={[
-              "Single Family",
-              "Multi Family",
-              "Commercial",
-              "Land",
-              "Other",
-            ]}
-          />
           <button className="primary-btn form-btn" type="submit">
             Save Buyer
           </button>
