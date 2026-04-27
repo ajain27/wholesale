@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import {
   CheckCircle2,
@@ -10,6 +10,8 @@ import {
   Star,
   DollarSign,
   Users,
+  Moon,
+  Sun,
 } from "lucide-react";
 import "../css/styles.css";
 import { getSavedDeals, monthKey, currency } from "../utils/utils";
@@ -42,7 +44,17 @@ const emptyForm = {
 const STORAGE_KEY = "wholesale-real-estate-crm-v2";
 
 function Wholesale() {
+  const [theme, setTheme] = useState(() => localStorage.getItem("crmTheme") || "light");
   const [activeView, setActiveView] = useState("dashboard");
+
+  useEffect(() => {
+    localStorage.setItem("crmTheme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
   const [deals, setDeals] = useState(getSavedDeals);
   const [form, setForm] = useState(emptyForm);
   const [filters, setFilters] = useState({
@@ -258,18 +270,26 @@ function Wholesale() {
 
   return (
     <div className="layout">
-      <Sidebar activeView={activeView} setActiveView={setActiveView} />
+      <Sidebar activeView={activeView} setActiveView={setActiveView} theme={theme} setTheme={setTheme} />
 
       <main className="main">
         {activeView === "dashboard" ? (
           <>
             <header className="page-header">
               <div>
-                <h1 style={{ color: "#1769e8" }}>YOU WIN ESTATES</h1>
+                <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>YOU WIN ESTATES</h1>
                 <span>
                   Track and manage your wholesale real estate pipeline locally.
                 </span>
               </div>
+              <button 
+                className="theme-toggle ghost-btn" 
+                style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0 }}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                title="Toggle Theme"
+              >
+                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
             </header>
 
             <section className="stats-grid">
@@ -312,7 +332,7 @@ function Wholesale() {
             />
           </>
         ) : (
-          <Buyers />
+          <Buyers theme={theme} setTheme={setTheme} />
         )}
       </main>
     </div>

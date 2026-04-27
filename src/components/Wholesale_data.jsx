@@ -119,7 +119,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                   <input
                     type="number"
                     className="readonly-input small"
-                    style={{ background: '#fff', width: '100px', padding: '0 12px' }}
+                    style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
                     value={deal.contractPrice || ""}
                     onChange={(e) => updateDeal(deal.id, "contractPrice", e.target.value)}
                   />
@@ -141,7 +141,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     <input
                       type="number"
                       className="readonly-input small"
-                      style={{ background: '#fff', width: '100px', padding: '0 12px' }}
+                      style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
                       value={deal.assignedPrice || ""}
                       onChange={(e) =>
                         updateDeal(deal.id, "assignedPrice", e.target.value)
@@ -166,7 +166,7 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                 <td>
                   {deal.closed === "Yes" ? (
                     <select
-                      style={{ width: "90px", padding: "4px 8px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-card)" }}
+                      style={{ width: "90px", padding: "4px 8px", borderRadius: "6px", border: "1px solid var(--input-border)", background: "var(--input-bg)", color: "var(--input-text)" }}
                       value={deal.closedInMonth || ""}
                       onChange={(e) =>
                         updateDeal(deal.id, "closedInMonth", e.target.value)

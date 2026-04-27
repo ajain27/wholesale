@@ -1,11 +1,22 @@
-import { Home, Users } from "lucide-react";
+import { Home, Users, Moon, Sun } from "lucide-react";
 import logo from "../assets/logo.png";
 
-function Sidebar({ activeView, setActiveView }) {
+function Sidebar({ activeView, setActiveView, theme, setTheme }) {
   return (
     <aside className="sidebar">
-      <div className="brand" style={{ display: 'block', textAlign: 'center', paddingBottom: '20px', borderBottom: '1px solid var(--line)' }}>
-        <img src={logo} alt="You Win Estates" style={{ width: '100%', maxWidth: '180px', height: 'auto', display: 'block', margin: '0 auto' }} />
+      <div className="brand" style={{ display: 'flex', justifyContent: 'center', borderBottom: '1px solid var(--line)', paddingBottom: '20px' }}>
+        <img 
+          src={logo} 
+          alt="You Win Estates" 
+          style={{ 
+            width: '100%', 
+            height: 'auto', 
+            display: 'block', 
+            opacity: 0.95,
+            mixBlendMode: theme === 'dark' ? 'screen' : 'multiply',
+            filter: theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none'
+          }} 
+        />
       </div>
       <nav>
         <a
@@ -25,7 +36,7 @@ function Sidebar({ activeView, setActiveView }) {
           Buyers List
         </a>
       </nav>
-      <div className="user-card">
+      <div className="user-card" style={{ marginTop: 'auto' }}>
         <div className="avatar">AJ</div>
         <div>
           <strong>Local CRM</strong>

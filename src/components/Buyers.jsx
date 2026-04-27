@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { RefreshCw, Plus, Users } from "lucide-react";
+import { RefreshCw, Plus, Users, Sun, Moon } from "lucide-react";
 import { getSavedBuyers, BUYERS_STORAGE_KEY } from "../utils/utils";
 import BuyerForm from "./BuyerForm";
 import BuyerFilters from "./BuyerFilters";
@@ -15,7 +15,7 @@ const emptyBuyerForm = {
   realEstateType: "Single Family",
 };
 
-function Buyers() {
+function Buyers({ theme, setTheme }) {
   const [buyers, setBuyers] = useState(getSavedBuyers);
   const [form, setForm] = useState(emptyBuyerForm);
   const [filters, setFilters] = useState({
@@ -120,20 +120,18 @@ function Buyers() {
     <>
       <header className="page-header">
         <div>
-          <h1 style={{ color: "#1769e8" }}>Buyers List</h1>
+          <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>Buyers List</h1>
           <span>
             Manage your network of cash buyers and real estate investors.
           </span>
         </div>
-        <button
-          className="primary-btn"
-          onClick={() =>
-            document
-              .getElementById("add-buyer")
-              ?.scrollIntoView({ behavior: "smooth" })
-          }
+        <button 
+          className="theme-toggle ghost-btn" 
+          style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0 }}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          title="Toggle Theme"
         >
-          <Plus size={18} /> Add Buyer
+          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </header>
 

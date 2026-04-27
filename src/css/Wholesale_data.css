@@ -1,0 +1,102 @@
+.board-panel {
+  overflow: hidden;
+  overflow-x: auto;
+}
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1180px;
+}
+th {
+  text-align: left;
+  color: var(--th-text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 12px;
+  padding: 18px 18px;
+  background: var(--th-bg);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+td {
+  padding: 18px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.compact-table th {
+  padding: 12px 14px;
+}
+.compact-table td {
+  padding: 8px 14px;
+}
+.compact-table .readonly-input {
+  height: 36px;
+  border: transparent;
+  background: transparent;
+  padding: 0;
+}
+.readonly-input {
+  width: 120px;
+  height: 44px;
+  border: transparent;
+  border-radius: 8px;
+  background: transparent;
+  padding: 0;
+  color: var(--text);
+  opacity: 1;
+}
+.readonly-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+.readonly-input.wide {
+  width: 180px;
+  font-weight: 600;
+}
+.readonly-input.extra-wide {
+  width: 250px;
+}
+.readonly-input.small {
+  width: 58px;
+  text-align: center;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border-radius: 7px;
+  padding: 8px 12px;
+  background: var(--badge-bg);
+  color: var(--nav-text);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge.offer-sent {
+  color: var(--blue);
+  background: var(--blue-light);
+}
+.badge.under-review,
+.badge.maybe {
+  color: var(--orange);
+  background: var(--bg-orange-light);
+}
+.badge.accepted,
+.badge.yes,
+.badge.closed {
+  color: var(--green);
+  background: var(--bg-green-light);
+}
+.badge.rejected,
+.badge.no {
+  color: var(--red);
+  background: var(--bg-red-light);
+}
+.table-footer {
+  padding: 18px 22px;
+  color: var(--muted);
+}
