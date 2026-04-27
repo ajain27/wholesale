@@ -121,8 +121,51 @@ function Wholesale() {
     if (currencyFields.includes(name) && value) {
       const numericValue = value.replace(/[^0-9]/g, "");
       if (numericValue) {
+        const numVal = parseInt(numericValue, 10);
+
+        const parseNumber = (val) => Number(String(val || "0").replace(/[^0-9]/g, ""));
+        const currentVals = {
+          arv: parseNumber(form.arv),
+          rehabCost: parseNumber(form.rehabCost),
+          mao: parseNumber(form.mao),
+          contractPrice: parseNumber(form.contractPrice),
+          assignedPrice: parseNumber(form.assignedPrice),
+        };
+        currentVals[name] = numVal;
+
+        // Validations
+        if (currentVals.arv > 0) {
+          if (currentVals.rehabCost > currentVals.arv) {
+            alert("Rehab cost cannot be more than ARV.");
+            setForm((prev) => ({ ...prev, [name]: "" }));
+            return;
+          }
+          if (currentVals.mao > currentVals.arv) {
+            alert("MAO cannot be more than ARV.");
+            setForm((prev) => ({ ...prev, [name]: "" }));
+            return;
+          }
+          if (currentVals.contractPrice > currentVals.arv) {
+            alert("Contract price cannot be more than ARV.");
+            setForm((prev) => ({ ...prev, [name]: "" }));
+            return;
+          }
+        }
+
+        if (currentVals.mao > 0 && currentVals.rehabCost > currentVals.mao) {
+          alert("Rehab cost cannot be more than MAO.");
+          setForm((prev) => ({ ...prev, [name]: "" }));
+          return;
+        }
+
+        if (currentVals.contractPrice > 0 && currentVals.assignedPrice > 0 && currentVals.assignedPrice < currentVals.contractPrice) {
+          alert("Assigned price needs to be more than or equal to contract price.");
+          setForm((prev) => ({ ...prev, [name]: "" }));
+          return;
+        }
+
         const formatted =
-          "$" + parseInt(numericValue, 10).toLocaleString("en-US");
+          "$" + numVal.toLocaleString("en-US");
         setForm((prev) => ({ ...prev, [name]: formatted }));
       }
     }
@@ -148,10 +191,13 @@ function Wholesale() {
     const contractNum = parseNumber(form.contractPrice);
     const assignedNum = parseNumber(form.assignedPrice);
 
-    if (maoNum > arvNum || contractNum > arvNum || assignedNum > arvNum) {
-      alert("MAO, Contract Price, and Assigned Price cannot be more than ARV.");
-      return;
+    if (arvNum > 0) {
+      if (rehabNum > arvNum) { alert("Rehab cost cannot be more than ARV."); return; }
+      if (maoNum > arvNum) { alert("MAO cannot be more than ARV."); return; }
+      if (contractNum > arvNum) { alert("Contract price cannot be more than ARV."); return; }
     }
+    if (maoNum > 0 && rehabNum > maoNum) { alert("Rehab cost cannot be more than MAO."); return; }
+    if (contractNum > 0 && assignedNum > 0 && assignedNum < contractNum) { alert("Assigned price needs to be more than or equal to contract price."); return; }
 
     const newDeal = {
       ...form,

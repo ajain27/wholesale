@@ -38,11 +38,11 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
         <table className="compact-table">
           <thead>
             <tr>
-              <th>Full Name</th>
+              <th>Name</th>
               <th>Email</th>
-              <th>Phone Number</th>
-              <th>City</th>
               <th>State</th>
+              <th>City</th>
+              <th>Phone Number</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -77,11 +77,13 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                     </div>
                   )}
                 </td>
+                <ReadOnlyCell value={buyer.state} small />
+                <td>
+                  <ReadOnlyCell value={buyer.city} />
+                </td>
                 <td>
                   <input id={`readonly-phone-${buyer.id}`} className="readonly-input" readOnly value={buyer.phone || ""} />
                 </td>
-                <ReadOnlyCell value={buyer.city} />
-                <ReadOnlyCell value={buyer.state} small />
                 <td>
                   <button
                     className="danger-btn"

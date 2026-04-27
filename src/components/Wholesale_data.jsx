@@ -34,14 +34,6 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
   function updateDeal(id, field, value) {
     const deal = deals.find((d) => d.id === id);
 
-    if (["contractPrice", "assignedPrice"].includes(field)) {
-      const numValue = Number(value);
-      if (!isNaN(numValue) && numValue > deal.arv) {
-        alert(`${field === "contractPrice" ? "Contract" : "Assigned"} Price cannot be more than ARV (${currency(deal.arv)}).`);
-        return;
-      }
-    }
-
     // Business Rule: Enforce the "Closed" requirements even on updates
     if (field === "closed" && value === "Yes") {
       const deal = deals.find((d) => d.id === id);
@@ -142,9 +134,17 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                     type="number"
                     className="readonly-input small"
                     style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
-                    value={deal.contractPrice || ""}
+                    defaultValue={deal.contractPrice || ""}
                     disabled={deal.closed === "Yes"}
-                    onChange={(e) => updateDeal(deal.id, "contractPrice", e.target.value)}
+                    onBlur={(e) => {
+                      const val = Number(e.target.value);
+                      if (val > deal.arv && deal.arv > 0) {
+                        alert(`Contract price cannot be more than ARV (${currency(deal.arv)}).`);
+                        e.target.value = deal.contractPrice || "";
+                        return;
+                      }
+                      updateDeal(deal.id, "contractPrice", e.target.value);
+                    }}
                   />
                 </td>
                 <td>
@@ -166,11 +166,17 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
                       type="number"
                       className="readonly-input small"
                       style={{ background: 'var(--input-bg)', width: '100px', padding: '0 12px', border: '1px solid var(--input-border)', color: 'var(--input-text)' }}
-                      value={deal.assignedPrice || ""}
+                      defaultValue={deal.assignedPrice || ""}
                       disabled={deal.closed === "Yes"}
-                      onChange={(e) =>
-                        updateDeal(deal.id, "assignedPrice", e.target.value)
-                      }
+                      onBlur={(e) => {
+                        const val = Number(e.target.value);
+                        if (val < deal.contractPrice && val > 0 && deal.contractPrice > 0) {
+                          alert(`Assigned price needs to be more than or equal to contract price (${currency(deal.contractPrice)}).`);
+                          e.target.value = deal.assignedPrice || "";
+                          return;
+                        }
+                        updateDeal(deal.id, "assignedPrice", e.target.value);
+                      }}
                     />
                   ) : (
                     <span style={{ color: '#9ca3af' }}>—</span>
