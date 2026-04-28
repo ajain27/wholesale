@@ -75,13 +75,8 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                       </button>
                     </div>
                   ) : (
-                    <div className="inline-edit-row">
-                      <input
-                        id={`readonly-email-${buyer.id}`}
-                        className="readonly-input extra-wide"
-                        readOnly
-                        value={buyer.email || ""}
-                      />
+                    <div className="field-with-action">
+                      <span className="table-text">{buyer.email || "—"}</span>
                       <button
                         className="ghost-btn icon-button"
                         onClick={() => startEditingField(buyer, "email")}
@@ -120,13 +115,8 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                       </button>
                     </div>
                   ) : (
-                    <div className="inline-edit-row">
-                      <input
-                        id={`readonly-phone-${buyer.id}`}
-                        className="readonly-input"
-                        readOnly
-                        value={buyer.phone || ""}
-                      />
+                    <div className="field-with-action">
+                      <span className="table-text">{buyer.phone || "—"}</span>
                       <button
                         className="ghost-btn icon-button"
                         onClick={() => startEditingField(buyer, "phone")}

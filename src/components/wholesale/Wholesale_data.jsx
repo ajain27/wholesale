@@ -1,5 +1,5 @@
 import { ReadOnlyCell } from "../elements";
-import { Trash2, FileText } from "lucide-react";
+import { Trash2, FileText, Edit2, Check } from "lucide-react";
 import { currency } from "../../utils/utils";
 import { useState, useEffect } from "react";
 import Pagination from "../pagination/Pagination";
@@ -16,6 +16,9 @@ function Wholesale_data({
 }) {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [notesDraft, setNotesDraft] = useState("");
+  const [editingBuyerId, setEditingBuyerId] = useState(null);
+  const [editingBuyerField, setEditingBuyerField] = useState(null);
+  const [editBuyerValue, setEditBuyerValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -28,6 +31,24 @@ function Wholesale_data({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
+
+  function startEditingBuyer(deal, field) {
+    setEditingBuyerId(deal.id);
+    setEditingBuyerField(field);
+    setEditBuyerValue(deal[field] || "");
+  }
+
+  function cancelBuyerEdit() {
+    setEditingBuyerId(null);
+    setEditingBuyerField(null);
+    setEditBuyerValue("");
+  }
+
+  function saveBuyerEdit(id) {
+    if (!editingBuyerField) return;
+    updateDeal(id, editingBuyerField, editBuyerValue);
+    cancelBuyerEdit();
+  }
 
   const handleRowClick = (deal) => {
     setSelectedDeal(deal);
@@ -265,26 +286,92 @@ function Wholesale_data({
                 <td>
                   {deal.assigned === "Yes" ? (
                     <div className="buyer-info-cell">
-                      <input
-                        type="text"
-                        className="readonly-input table-input buyer-detail-input"
-                        defaultValue={deal.buyerName || ""}
-                        disabled={deal.closed === "Yes"}
-                        onBlur={(e) =>
-                          updateDeal(deal.id, "buyerName", e.target.value)
-                        }
-                        placeholder="Buyer Name"
-                      />
-                      <input
-                        type="email"
-                        className="readonly-input table-input buyer-detail-input"
-                        defaultValue={deal.buyerEmail || ""}
-                        disabled={deal.closed === "Yes"}
-                        onBlur={(e) =>
-                          updateDeal(deal.id, "buyerEmail", e.target.value)
-                        }
-                        placeholder="Buyer Email"
-                      />
+                      <div className="buyer-line">
+                        <span className="buyer-label">Name</span>
+                        {editingBuyerId === deal.id &&
+                        editingBuyerField === "buyerName" ? (
+                          <>
+                            <input
+                              type="text"
+                              className="readonly-input table-input buyer-edit-input"
+                              value={editBuyerValue}
+                              onChange={(e) =>
+                                setEditBuyerValue(e.target.value)
+                              }
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") saveBuyerEdit(deal.id);
+                                if (e.key === "Escape") cancelBuyerEdit();
+                              }}
+                            />
+                            <button
+                              className="ghost-btn icon-button"
+                              onClick={() => saveBuyerEdit(deal.id)}
+                              title="Save Name"
+                            >
+                              <Check size={16} color="var(--green)" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="table-text">
+                              {deal.buyerName || "—"}
+                            </span>
+                            <button
+                              className="ghost-btn icon-button"
+                              onClick={() =>
+                                startEditingBuyer(deal, "buyerName")
+                              }
+                              title="Edit Name"
+                            >
+                              <Edit2 size={16} color="var(--muted)" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      <div className="buyer-line">
+                        <span className="buyer-label">Email</span>
+                        {editingBuyerId === deal.id &&
+                        editingBuyerField === "buyerEmail" ? (
+                          <>
+                            <input
+                              type="email"
+                              className="readonly-input table-input buyer-edit-input"
+                              value={editBuyerValue}
+                              onChange={(e) =>
+                                setEditBuyerValue(e.target.value)
+                              }
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") saveBuyerEdit(deal.id);
+                                if (e.key === "Escape") cancelBuyerEdit();
+                              }}
+                            />
+                            <button
+                              className="ghost-btn icon-button"
+                              onClick={() => saveBuyerEdit(deal.id)}
+                              title="Save Email"
+                            >
+                              <Check size={16} color="var(--green)" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="table-text">
+                              {deal.buyerEmail || "—"}
+                            </span>
+                            <button
+                              className="ghost-btn icon-button"
+                              onClick={() =>
+                                startEditingBuyer(deal, "buyerEmail")
+                              }
+                              title="Edit Email"
+                            >
+                              <Edit2 size={16} color="var(--muted)" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <span className="placeholder-dash">—</span>
