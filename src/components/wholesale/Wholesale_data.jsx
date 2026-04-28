@@ -132,7 +132,7 @@ function Wholesale_data({
           </thead>
           <tbody>
             {currentDeals.map((deal) => (
-              <tr key={deal.id}>
+              <tr key={deal.id} data-deal-id={deal.id}>
                 <td style={{ textAlign: "center" }}>
                   <button
                     className="secondary-btn"

@@ -1,6 +1,12 @@
 import { Field, Select } from "../elements";
 
-function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
+function Wholesale_form({
+  addDeal,
+  form,
+  handleChange,
+  handleBlur,
+  checkDuplicateAddress,
+}) {
   return (
     <section className="panel" id="add-property">
       <div>
@@ -19,6 +25,7 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             name="address"
             value={form.address}
             onChange={handleChange}
+            onBlur={(e) => checkDuplicateAddress(e.target.value)}
             required
           />
           <Field

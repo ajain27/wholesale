@@ -191,6 +191,31 @@ function Wholesale() {
     }
   }
 
+  function checkDuplicateAddress(address) {
+    if (!address.trim()) return;
+
+    const existingDeal = deals.find(
+      (deal) => deal.address.toLowerCase() === address.trim().toLowerCase(),
+    );
+    if (existingDeal) {
+      alert("A property with this address already exists.");
+      // Filter to show only the existing deal
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        search: existingDeal.address,
+      }));
+      // Scroll to the deal after a short delay to allow filtering
+      setTimeout(() => {
+        const rowElement = document.querySelector(
+          `[data-deal-id="${existingDeal.id}"]`,
+        );
+        if (rowElement) {
+          rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
+    }
+  }
+
   async function addDeal(event) {
     event.preventDefault();
 
@@ -202,6 +227,30 @@ function Wholesale() {
       !form.state.trim()
     ) {
       alert("Please fill out the required address fields.");
+      return;
+    }
+
+    // Check for duplicate address
+    const existingDeal = deals.find(
+      (deal) =>
+        deal.address.toLowerCase() === form.address.trim().toLowerCase(),
+    );
+    if (existingDeal) {
+      alert("A property with this address already exists.");
+      // Filter to show only the existing deal
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        search: existingDeal.address,
+      }));
+      // Scroll to the deal after a short delay to allow filtering
+      setTimeout(() => {
+        const rowElement = document.querySelector(
+          `[data-deal-id="${existingDeal.id}"]`,
+        );
+        if (rowElement) {
+          rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
       return;
     }
 
@@ -476,6 +525,7 @@ function Wholesale() {
               form={form}
               handleChange={handleChange}
               handleBlur={handleBlur}
+              checkDuplicateAddress={checkDuplicateAddress}
             />
 
             <Wholesale_filters
