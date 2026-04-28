@@ -89,41 +89,47 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
               required
             />
           )}
-          <Field
-            label="Contract Price"
-            name="contractPrice"
-            type="text"
-            value={form.contractPrice}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required={form.offerStatus === "Offer Sent"}
-          />
-          <Select
-            label="Accepted"
-            name="sellerAccepted"
-            value={form.sellerAccepted}
-            onChange={handleChange}
-            options={["No", "Waiting", "Yes"]}
-            required
-          />
-          <Select
-            label="Assigned"
-            name="assigned"
-            value={form.assigned}
-            onChange={handleChange}
-            options={["No", "Yes"]}
-          />
-          <Field
-            label="Assigned Price"
-            name="assignedPrice"
-            type="text"
-            value={form.assignedPrice}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required={form.assigned === "Yes"}
-          />
+          {form.offerStatus !== "Not Sent" && (
+            <Field
+              label="Contract Price"
+              name="contractPrice"
+              type="text"
+              value={form.contractPrice}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+            />
+          )}
+          {form.offerStatus !== "Not Sent" && (
+            <Select
+              label="Accepted"
+              name="sellerAccepted"
+              value={form.sellerAccepted}
+              onChange={handleChange}
+              options={["No", "Waiting", "Yes"]}
+              required
+            />
+          )}
+          {form.sellerAccepted !== "No" && (
+            <Select
+              label="Assigned"
+              name="assigned"
+              value={form.assigned}
+              onChange={handleChange}
+              options={["No", "Yes"]}
+            />
+          )}
           {form.assigned === "Yes" && (
             <>
+              <Field
+                label="Assigned Price"
+                name="assignedPrice"
+                type="text"
+                value={form.assignedPrice}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+              />
               <Field
                 label="Buyer Name / LLC"
                 name="buyerName"

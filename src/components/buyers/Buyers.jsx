@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { RefreshCw, Plus, Users, Sun, Moon } from "lucide-react";
+import { RefreshCw, Users, Sun, Moon } from "lucide-react";
 import {
   fetchBuyers,
   saveBuyer,

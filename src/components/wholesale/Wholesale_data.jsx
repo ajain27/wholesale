@@ -163,67 +163,92 @@ function Wholesale_data({
                     <option value="Offer Sent">Offer Sent</option>
                   </select>
                 </td>
-                <ReadOnlyCell
-                  value={
-                    deal.offerStatus !== "Not Sent" && deal.offerDate
-                      ? new Date(
-                          `${deal.offerDate}T00:00:00`,
-                        ).toLocaleDateString()
-                      : "—"
-                  }
-                />
                 <td>
-                  <select
-                    className={`badge ${deal.sellerAccepted?.toLowerCase()}`}
-                    value={deal.sellerAccepted}
-                    disabled={deal.closed === "Yes"}
-                    onChange={(e) =>
-                      updateDeal(deal.id, "sellerAccepted", e.target.value)
-                    }
-                  >
-                    <option value="No">No</option>
-                    <option value="Waiting">Waiting</option>
-                    <option value="Yes">Yes</option>
-                  </select>
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    className="readonly-input small"
-                    style={{
-                      background: "var(--input-bg)",
-                      width: "100px",
-                      padding: "0 12px",
-                      border: "1px solid var(--input-border)",
-                      color: "var(--input-text)",
-                    }}
-                    defaultValue={deal.contractPrice || ""}
-                    disabled={deal.closed === "Yes"}
-                    onBlur={(e) => {
-                      const val = Number(e.target.value);
-                      if (val > deal.arv && deal.arv > 0) {
-                        alert(
-                          `Contract price cannot be more than ARV (${currency(deal.arv)}).`,
-                        );
-                        e.target.value = deal.contractPrice || "";
-                        return;
+                  {deal.offerStatus === "Not Sent" ? (
+                    <span style={{ color: "#9ca3af" }}>—</span>
+                  ) : (
+                    <input
+                      type="date"
+                      className="readonly-input small"
+                      style={{
+                        background: "var(--input-bg)",
+                        width: "120px",
+                        padding: "0 8px",
+                        border: "1px solid var(--input-border)",
+                        color: "var(--input-text)",
+                      }}
+                      defaultValue={deal.offerDate || ""}
+                      disabled={deal.closed === "Yes"}
+                      onBlur={(e) =>
+                        updateDeal(deal.id, "offerDate", e.target.value)
                       }
-                      updateDeal(deal.id, "contractPrice", e.target.value);
-                    }}
-                  />
+                    />
+                  )}
                 </td>
                 <td>
-                  <select
-                    className={`badge ${deal.assigned?.toLowerCase()}`}
-                    value={deal.assigned}
-                    disabled={deal.closed === "Yes"}
-                    onChange={(e) =>
-                      updateDeal(deal.id, "assigned", e.target.value)
-                    }
-                  >
-                    <option value="No">No</option>
-                    <option value="Yes">Yes</option>
-                  </select>
+                  {deal.offerStatus === "Not Sent" ? (
+                    <span style={{ color: "#9ca3af" }}>—</span>
+                  ) : (
+                    <select
+                      className={`badge ${deal.sellerAccepted?.toLowerCase()}`}
+                      value={deal.sellerAccepted}
+                      disabled={deal.closed === "Yes"}
+                      onChange={(e) =>
+                        updateDeal(deal.id, "sellerAccepted", e.target.value)
+                      }
+                    >
+                      <option value="No">No</option>
+                      <option value="Waiting">Waiting</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  )}
+                </td>
+                <td>
+                  {deal.offerStatus === "Not Sent" ? (
+                    <span style={{ color: "#9ca3af" }}>—</span>
+                  ) : (
+                    <input
+                      type="number"
+                      className="readonly-input small"
+                      style={{
+                        background: "var(--input-bg)",
+                        width: "100px",
+                        padding: "0 12px",
+                        border: "1px solid var(--input-border)",
+                        color: "var(--input-text)",
+                      }}
+                      defaultValue={deal.contractPrice || ""}
+                      disabled={deal.closed === "Yes"}
+                      onBlur={(e) => {
+                        const val = Number(e.target.value);
+                        if (val > deal.arv && deal.arv > 0) {
+                          alert(
+                            `Contract price cannot be more than ARV (${currency(deal.arv)}).`,
+                          );
+                          e.target.value = deal.contractPrice || "";
+                          return;
+                        }
+                        updateDeal(deal.id, "contractPrice", e.target.value);
+                      }}
+                    />
+                  )}
+                </td>
+                <td>
+                  {deal.sellerAccepted === "No" ? (
+                    <span style={{ color: "#9ca3af" }}>—</span>
+                  ) : (
+                    <select
+                      className={`badge ${deal.assigned?.toLowerCase()}`}
+                      value={deal.assigned}
+                      disabled={deal.closed === "Yes"}
+                      onChange={(e) =>
+                        updateDeal(deal.id, "assigned", e.target.value)
+                      }
+                    >
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  )}
                 </td>
                 <td>
                   {deal.assigned === "Yes" ? (
