@@ -79,13 +79,24 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             options={["Not Sent", "Offer Sent"]}
             required
           />
+          {form.offerStatus === "Offer Sent" && (
+            <Field
+              label="Offer Date"
+              name="offerDate"
+              type="date"
+              value={form.offerDate}
+              onChange={handleChange}
+              required
+            />
+          )}
           <Field
-            label="Offer Date"
-            name="offerDate"
-            type="date"
-            value={form.offerDate}
+            label="Contract Price"
+            name="contractPrice"
+            type="text"
+            value={form.contractPrice}
             onChange={handleChange}
-            required
+            onBlur={handleBlur}
+            required={form.offerStatus === "Offer Sent"}
           />
           <Select
             label="Accepted"
@@ -101,15 +112,6 @@ function Wholesale_form({ addDeal, form, handleChange, handleBlur }) {
             value={form.assigned}
             onChange={handleChange}
             options={["No", "Yes"]}
-          />
-          <Field
-            label="Contract Price"
-            name="contractPrice"
-            type="text"
-            value={form.contractPrice}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
           />
           <Field
             label="Assigned Price"

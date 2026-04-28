@@ -126,9 +126,7 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                   )}
                 </td>
                 <ReadOnlyCell value={buyer.state} small />
-                <td>
-                  <ReadOnlyCell value={buyer.city} />
-                </td>
+                <ReadOnlyCell value={buyer.city} />
                 <td>
                   {editingBuyerId === buyer.id && editingField === "phone" ? (
                     <div

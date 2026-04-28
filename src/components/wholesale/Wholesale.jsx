@@ -206,6 +206,12 @@ function Wholesale() {
     }
 
     const parseNumber = (val) => Number(String(val).replace(/[^0-9]/g, ""));
+
+    if (form.offerStatus === "Offer Sent" && !form.contractPrice.trim()) {
+      alert("Please fill out Contract Price when the offer is sent.");
+      return;
+    }
+
     const arvNum = parseNumber(form.arv);
     const maoNum = parseNumber(form.mao);
     const contractNum = parseNumber(form.contractPrice);

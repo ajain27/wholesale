@@ -117,7 +117,9 @@ function Wholesale_data({
                   <select
                     className={`badge ${deal.offerStatus?.toLowerCase()?.replaceAll(" ", "-")}`}
                     value={deal.offerStatus}
-                    disabled={deal.closed === "Yes"}
+                    disabled={
+                      deal.closed === "Yes" || deal.sellerAccepted !== "Waiting"
+                    }
                     onChange={(e) =>
                       updateDeal(deal.id, "offerStatus", e.target.value)
                     }
@@ -132,7 +134,7 @@ function Wholesale_data({
                 </td>
                 <ReadOnlyCell
                   value={
-                    deal.offerDate
+                    deal.offerStatus !== "Not Sent" && deal.offerDate
                       ? new Date(
                           `${deal.offerDate}T00:00:00`,
                         ).toLocaleDateString()
@@ -140,7 +142,18 @@ function Wholesale_data({
                   }
                 />
                 <td>
-                  <Badge value={deal.sellerAccepted} />
+                  <select
+                    className={`badge ${deal.sellerAccepted?.toLowerCase()}`}
+                    value={deal.sellerAccepted}
+                    disabled={deal.closed === "Yes"}
+                    onChange={(e) =>
+                      updateDeal(deal.id, "sellerAccepted", e.target.value)
+                    }
+                  >
+                    <option value="No">No</option>
+                    <option value="Waiting">Waiting</option>
+                    <option value="Yes">Yes</option>
+                  </select>
                 </td>
                 <td>
                   <input
