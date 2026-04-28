@@ -1,4 +1,4 @@
-import { ReadOnlyCell, Badge } from "../elements";
+import { ReadOnlyCell } from "../elements";
 import { Trash2, FileText } from "lucide-react";
 import { currency } from "../../utils/utils";
 import { useState, useEffect } from "react";
@@ -11,6 +11,8 @@ function Wholesale_data({
   deleteDeal,
   persist,
   saveDeal,
+  fetchBuyers,
+  saveBuyer,
 }) {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [notesDraft, setNotesDraft] = useState("");
@@ -62,6 +64,41 @@ function Wholesale_data({
     try {
       await saveDeal(updatedDeal);
       persist(nextDeals);
+
+      // Sync buyer info to buyers list if assigned and buyer details provided
+      if (
+        (field === "buyerName" || field === "buyerEmail") &&
+        updatedDeal.assigned === "Yes" &&
+        updatedDeal.buyerEmail?.trim() &&
+        updatedDeal.buyerName?.trim()
+      ) {
+        const existingBuyers = await fetchBuyers();
+        const buyerEmail = updatedDeal.buyerEmail.trim().toLowerCase();
+        const existingBuyer = existingBuyers.find(
+          (b) => b.email?.toLowerCase() === buyerEmail,
+        );
+
+        if (existingBuyer) {
+          // Update existing buyer
+          const updatedBuyer = {
+            ...existingBuyer,
+            fullName: updatedDeal.buyerName.trim(),
+          };
+          await saveBuyer(updatedBuyer);
+        } else {
+          // Add new buyer
+          const newBuyer = {
+            id: crypto.randomUUID(),
+            fullName: updatedDeal.buyerName.trim(),
+            email: buyerEmail,
+            phone: "",
+            city: updatedDeal.city.trim(),
+            state: updatedDeal.state.trim().toUpperCase(),
+            realEstateType: "Single Family",
+          };
+          await saveBuyer(newBuyer);
+        }
+      }
     } catch (error) {
       console.error("Failed to update property", error);
       alert("Unable to update property. Check your database connection.");
@@ -117,19 +154,13 @@ function Wholesale_data({
                   <select
                     className={`badge ${deal.offerStatus?.toLowerCase()?.replaceAll(" ", "-")}`}
                     value={deal.offerStatus}
-                    disabled={
-                      deal.closed === "Yes" || deal.sellerAccepted !== "Waiting"
-                    }
+                    disabled={deal.closed === "Yes"}
                     onChange={(e) =>
                       updateDeal(deal.id, "offerStatus", e.target.value)
                     }
                   >
                     <option value="Not Sent">Not Sent</option>
                     <option value="Offer Sent">Offer Sent</option>
-                    <option value="Under Review">Under Review</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Accepted">Accepted</option>
-                    <option value="Closed">Closed</option>
                   </select>
                 </td>
                 <ReadOnlyCell
@@ -235,14 +266,44 @@ function Wholesale_data({
                         display: "flex",
                         flexDirection: "column",
                         gap: "4px",
-                        fontSize: "0.85em",
-                        whiteSpace: "nowrap",
                       }}
                     >
-                      <strong>{deal.buyerName || "—"}</strong>
-                      <span style={{ color: "var(--muted)" }}>
-                        {deal.buyerEmail || ""}
-                      </span>
+                      <input
+                        type="text"
+                        className="readonly-input small"
+                        style={{
+                          background: "var(--input-bg)",
+                          width: "120px",
+                          padding: "0 8px",
+                          border: "1px solid var(--input-border)",
+                          color: "var(--input-text)",
+                          fontSize: "0.85em",
+                        }}
+                        defaultValue={deal.buyerName || ""}
+                        disabled={deal.closed === "Yes"}
+                        onBlur={(e) =>
+                          updateDeal(deal.id, "buyerName", e.target.value)
+                        }
+                        placeholder="Buyer Name"
+                      />
+                      <input
+                        type="email"
+                        className="readonly-input small"
+                        style={{
+                          background: "var(--input-bg)",
+                          width: "120px",
+                          padding: "0 8px",
+                          border: "1px solid var(--input-border)",
+                          color: "var(--input-text)",
+                          fontSize: "0.85em",
+                        }}
+                        defaultValue={deal.buyerEmail || ""}
+                        disabled={deal.closed === "Yes"}
+                        onBlur={(e) =>
+                          updateDeal(deal.id, "buyerEmail", e.target.value)
+                        }
+                        placeholder="Buyer Email"
+                      />
                     </div>
                   ) : (
                     <span style={{ color: "#9ca3af" }}>—</span>

@@ -492,6 +492,8 @@ function Wholesale() {
               deleteDeal={deleteDeal}
               persist={persist}
               saveDeal={saveDeal}
+              fetchBuyers={fetchBuyers}
+              saveBuyer={saveBuyer}
             />
           </>
         ) : (
