@@ -15,6 +15,7 @@ import Wholesale_filters from "./Wholesale_filters";
 import Buyers from "../buyers/Buyers";
 import Sidebar from "../Sidebar";
 import StatsGrid from "./StatsGrid";
+import LoadingScreen from "../LoadingScreen";
 
 const emptyForm = {
   address: "",
@@ -53,6 +54,7 @@ function Wholesale() {
   }, [theme]);
   const [deals, setDeals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [form, setForm] = useState(emptyForm);
   const [filters, setFilters] = useState({
@@ -310,6 +312,8 @@ function Wholesale() {
     };
 
     try {
+      setTableLoading(true);
+
       if (
         form.assigned === "Yes" &&
         form.buyerEmail?.trim() &&
@@ -340,6 +344,8 @@ function Wholesale() {
     } catch (error) {
       console.error("Failed to save property", error);
       alert("Unable to save property. Check your database connection.");
+    } finally {
+      setTableLoading(false);
     }
   }
 
@@ -521,15 +527,21 @@ function Wholesale() {
               RefreshCw={RefreshCw}
               setFilters={setFilters}
             />
-            <Wholesale_data
-              filteredDeals={filteredDeals}
-              deals={deals}
-              deleteDeal={deleteDeal}
-              persist={persist}
-              saveDeal={saveDeal}
-              fetchBuyers={fetchBuyers}
-              saveBuyer={saveBuyer}
-            />
+            <LoadingScreen
+              isLoading={tableLoading}
+              minDuration={300}
+              loadingContent={<span>Loading updated deal data...</span>}
+            >
+              <Wholesale_data
+                filteredDeals={filteredDeals}
+                deals={deals}
+                deleteDeal={deleteDeal}
+                persist={persist}
+                saveDeal={saveDeal}
+                fetchBuyers={fetchBuyers}
+                saveBuyer={saveBuyer}
+              />
+            </LoadingScreen>
           </>
         ) : (
           <Buyers theme={theme} setTheme={setTheme} />
