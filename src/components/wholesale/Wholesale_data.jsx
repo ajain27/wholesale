@@ -10,7 +10,7 @@ function Wholesale_data({
   deals,
   deleteDeal,
   persist,
-  saveProperty,
+  saveDeal,
 }) {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [notesDraft, setNotesDraft] = useState("");
@@ -60,7 +60,7 @@ function Wholesale_data({
 
     const updatedDeal = nextDeals.find((deal) => deal.id === id);
     try {
-      await saveProperty(updatedDeal);
+      await saveDeal(updatedDeal);
       persist(nextDeals);
     } catch (error) {
       console.error("Failed to update property", error);

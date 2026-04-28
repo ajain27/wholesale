@@ -283,8 +283,8 @@ function Wholesale() {
       setDeals((prevDeals) => [...prevDeals, newDeal]);
       setForm(emptyForm);
     } catch (error) {
-      console.error("Failed to save deal", error);
-      alert("Unable to save deal. Check your database connection.");
+      console.error("Failed to save property", error);
+      alert("Unable to save property. Check your database connection.");
     }
   }
 
@@ -296,8 +296,8 @@ function Wholesale() {
       await deleteDealById(id);
       setDeals((prevDeals) => prevDeals.filter((deal) => deal.id !== id));
     } catch (error) {
-      console.error("Failed to delete deal", error);
-      alert("Unable to delete deal. Check your database connection.");
+      console.error("Failed to delete property", error);
+      alert("Unable to delete property. Check your database connection.");
     }
   }
 
