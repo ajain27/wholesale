@@ -1,0 +1,19 @@
+.pagination-footer {
+  padding: 16px;
+}
+.pagination-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pagination-button {
+  padding: 6px 10px;
+}
+.pagination-info {
+  display: flex;
+  align-items: center;
+  margin: 0 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}

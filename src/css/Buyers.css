@@ -1,0 +1,26 @@
+.inline-edit-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.editable-input {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  outline: none;
+}
+.editable-input.wide {
+  width: 220px;
+}
+.editable-input.narrow {
+  width: 180px;
+}
+.icon-button {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+}

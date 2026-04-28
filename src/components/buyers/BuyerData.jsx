@@ -51,23 +51,10 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                 <ReadOnlyCell value={buyer.fullName} wide />
                 <td>
                   {editingBuyerId === buyer.id && editingField === "email" ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className="inline-edit-row">
                       <input
                         id={`edit-email-${buyer.id}`}
-                        style={{
-                          width: "220px",
-                          height: "36px",
-                          padding: "0 8px",
-                          border: "1px solid var(--blue)",
-                          borderRadius: "6px",
-                          outline: "none",
-                        }}
+                        className="editable-input wide"
                         value={editFieldValue}
                         onChange={(e) => setEditFieldValue(e.target.value)}
                         autoFocus
@@ -80,27 +67,15 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                         }}
                       />
                       <button
-                        className="ghost-btn"
+                        className="ghost-btn icon-button"
                         onClick={() => saveField(buyer.id)}
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          minWidth: "32px",
-                          padding: 0,
-                        }}
                         title="Save"
                       >
                         <Check size={16} color="var(--green)" />
                       </button>
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className="inline-edit-row">
                       <input
                         id={`readonly-email-${buyer.id}`}
                         className="readonly-input extra-wide"
@@ -108,16 +83,8 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                         value={buyer.email || ""}
                       />
                       <button
-                        className="ghost-btn"
+                        className="ghost-btn icon-button"
                         onClick={() => startEditingField(buyer, "email")}
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          minWidth: "32px",
-                          padding: 0,
-                          border: "none",
-                          background: "transparent",
-                        }}
                         title="Edit Email"
                       >
                         <Edit2 size={16} color="var(--muted)" />
@@ -129,23 +96,10 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                 <ReadOnlyCell value={buyer.city} />
                 <td>
                   {editingBuyerId === buyer.id && editingField === "phone" ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className="inline-edit-row">
                       <input
                         id={`edit-phone-${buyer.id}`}
-                        style={{
-                          width: "180px",
-                          height: "36px",
-                          padding: "0 8px",
-                          border: "1px solid var(--blue)",
-                          borderRadius: "6px",
-                          outline: "none",
-                        }}
+                        className="editable-input narrow"
                         value={editFieldValue}
                         onChange={(e) => setEditFieldValue(e.target.value)}
                         autoFocus
@@ -158,27 +112,15 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                         }}
                       />
                       <button
-                        className="ghost-btn"
+                        className="ghost-btn icon-button"
                         onClick={() => saveField(buyer.id)}
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          minWidth: "32px",
-                          padding: 0,
-                        }}
                         title="Save"
                       >
                         <Check size={16} color="var(--green)" />
                       </button>
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "6px",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className="inline-edit-row">
                       <input
                         id={`readonly-phone-${buyer.id}`}
                         className="readonly-input"
@@ -186,16 +128,8 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
                         value={buyer.phone || ""}
                       />
                       <button
-                        className="ghost-btn"
+                        className="ghost-btn icon-button"
                         onClick={() => startEditingField(buyer, "phone")}
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          minWidth: "32px",
-                          padding: 0,
-                          border: "none",
-                          background: "transparent",
-                        }}
                         title="Edit Phone"
                       >
                         <Edit2 size={16} color="var(--muted)" />

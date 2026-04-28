@@ -7,24 +7,9 @@ function Modal({ isOpen, onClose, title, children, actions }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "16px",
-          }}
-        >
-          <h2 style={{ marginBottom: 0 }}>{title}</h2>
-          <button
-            className="danger-btn"
-            onClick={onClose}
-            style={{
-              background: "transparent",
-              color: "var(--muted)",
-              padding: "4px",
-            }}
-          >
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button className="danger-btn modal-close" onClick={onClose}>
             <X size={20} />
           </button>
         </div>

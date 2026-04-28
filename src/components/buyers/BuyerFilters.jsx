@@ -1,7 +1,7 @@
 import { Search, RefreshCw } from "lucide-react";
 import { Select } from "../elements";
 
-function BuyerFilters({ filters, states, types, setFilters }) {
+function BuyerFilters({ filters, states, setFilters }) {
   const handleFilter = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -16,11 +16,11 @@ function BuyerFilters({ filters, states, types, setFilters }) {
 
   return (
     <section className="panel">
-        <div className="panel-header">
-          <div>
-            <h2>Filter Buyer</h2>
-          </div>
+      <div className="panel-header">
+        <div>
+          <h2>Filter Buyer</h2>
         </div>
+      </div>
       <div className="filters">
         <label className="search-field">
           <Search size={18} />

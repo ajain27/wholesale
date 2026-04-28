@@ -15,6 +15,17 @@
   max-width: 500px;
   box-shadow: var(--shadow);
 }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.modal-close {
+  background: transparent;
+  color: var(--muted);
+  padding: 4px;
+}
 .modal h2 {
   margin-top: 0;
   margin-bottom: 16px;

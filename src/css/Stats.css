@@ -87,6 +87,9 @@
   flex-direction: column;
   line-height: 1.1;
 }
+.gauge-path {
+  transition: stroke-dashoffset 0.8s ease-out;
+}
 .gauge-val {
   font-size: 36px;
   font-weight: 800;

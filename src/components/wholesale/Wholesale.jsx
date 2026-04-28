@@ -471,22 +471,13 @@ function Wholesale() {
           <>
             <header className="page-header">
               <div>
-                <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>
-                  Lead Pipeline
-                </h1>
+                <h1>Lead Pipeline</h1>
                 <span>
                   Track and manage your real estate leads and deals locally.
                 </span>
               </div>
               <button
-                className="theme-toggle ghost-btn"
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  flexShrink: 0,
-                  marginRight: "10px",
-                }}
+                className="theme-toggle ghost-btn refresh-btn"
                 onClick={loadDeals}
                 title="Refresh Firebase data"
               >
@@ -495,12 +486,6 @@ function Wholesale() {
 
               <button
                 className="theme-toggle ghost-btn"
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  flexShrink: 0,
-                }}
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 title="Toggle Theme"
               >

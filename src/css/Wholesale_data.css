@@ -22,6 +22,10 @@ th {
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
+.notes-header {
+  width: 60px;
+  text-align: center;
+}
 td {
   padding: 18px;
   border-bottom: 1px solid var(--line);
@@ -63,6 +67,43 @@ td {
 .readonly-input.small {
   width: 58px;
   text-align: center;
+}
+.text-center {
+  text-align: center;
+}
+.note-btn {
+  padding: 6px 8px;
+  min-width: auto;
+}
+.table-input {
+  background: var(--input-bg);
+  width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+}
+.date-input {
+  width: 120px;
+  padding: 0 8px;
+}
+.contract-input {
+  width: 100px;
+}
+.buyer-info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.buyer-detail-input {
+  width: 120px;
+  padding: 0 8px;
+  font-size: 0.85em;
+}
+.placeholder-dash {
+  color: #9ca3af;
+}
+.revenue-value {
+  color: #059669;
 }
 .badge {
   display: inline-flex;

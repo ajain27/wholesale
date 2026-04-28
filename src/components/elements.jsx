@@ -38,13 +38,11 @@ export function GaugeStat({ label, subtitle, value, max, colorTheme }) {
             d="M 12,70 A 58,58 0 0,1 128,70"
           />
           <path
+            className="gauge-path"
             stroke={colorTheme === "orange" ? "#fcd34d" : "#86efac"}
             strokeWidth={stroke}
             strokeDasharray={`${circumference} ${circumference}`}
-            style={{
-              strokeDashoffset,
-              transition: "stroke-dashoffset 0.8s ease-out",
-            }}
+            strokeDashoffset={strokeDashoffset}
             fill="transparent"
             strokeLinecap="round"
             d="M 12,70 A 58,58 0 0,1 128,70"
@@ -63,9 +61,7 @@ function Field({ label, required, ...props }) {
     <label className="field">
       <span>
         {label}
-        {required && (
-          <span style={{ color: "var(--red)", marginLeft: "4px" }}>*</span>
-        )}
+        {required && <span className="required-marker">*</span>}
       </span>
       <input required={required} id={props.id || props.name} {...props} />
     </label>
@@ -77,9 +73,7 @@ function Select({ label, required, options, ...props }) {
     <label className="field">
       <span>
         {label}
-        {required && (
-          <span style={{ color: "var(--red)", marginLeft: "4px" }}>*</span>
-        )}
+        {required && <span className="required-marker">*</span>}
       </span>
       <select required={required} id={props.id || props.name} {...props}>
         {options.map((option) => (

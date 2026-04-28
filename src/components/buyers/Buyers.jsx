@@ -183,21 +183,13 @@ function Buyers({ theme, setTheme }) {
     <>
       <header className="page-header">
         <div>
-          <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>
-            Buyers List
-          </h1>
+          <h1>Buyers List</h1>
           <span>
             Manage your network of cash buyers and real estate investors.
           </span>
         </div>
         <button
           className="theme-toggle ghost-btn"
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            flexShrink: 0,
-          }}
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           title="Toggle Theme"
         >

@@ -111,7 +111,7 @@ function Wholesale_data({
         <table>
           <thead>
             <tr>
-              <th style={{ width: "60px", textAlign: "center" }}>Notes</th>
+              <th className="notes-header">Notes</th>
               <th>Property Address</th>
               <th>City</th>
               <th>Zip Code</th>
@@ -133,11 +133,10 @@ function Wholesale_data({
           <tbody>
             {currentDeals.map((deal) => (
               <tr key={deal.id} data-deal-id={deal.id}>
-                <td style={{ textAlign: "center" }}>
+                <td className="text-center">
                   <button
-                    className="secondary-btn"
+                    className="secondary-btn note-btn"
                     onClick={() => handleRowClick(deal)}
-                    style={{ padding: "6px 8px", minWidth: "auto" }}
                     title="View/Edit Notes"
                   >
                     <FileText size={16} />
@@ -165,18 +164,11 @@ function Wholesale_data({
                 </td>
                 <td>
                   {deal.offerStatus === "Not Sent" ? (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   ) : (
                     <input
                       type="date"
-                      className="readonly-input small"
-                      style={{
-                        background: "var(--input-bg)",
-                        width: "120px",
-                        padding: "0 8px",
-                        border: "1px solid var(--input-border)",
-                        color: "var(--input-text)",
-                      }}
+                      className="readonly-input table-input date-input"
                       defaultValue={deal.offerDate || ""}
                       disabled={deal.closed === "Yes"}
                       onBlur={(e) =>
@@ -187,7 +179,7 @@ function Wholesale_data({
                 </td>
                 <td>
                   {deal.offerStatus === "Not Sent" ? (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   ) : (
                     <select
                       className={`badge ${deal.sellerAccepted?.toLowerCase()}`}
@@ -205,18 +197,11 @@ function Wholesale_data({
                 </td>
                 <td>
                   {deal.offerStatus === "Not Sent" ? (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   ) : (
                     <input
                       type="number"
-                      className="readonly-input small"
-                      style={{
-                        background: "var(--input-bg)",
-                        width: "100px",
-                        padding: "0 12px",
-                        border: "1px solid var(--input-border)",
-                        color: "var(--input-text)",
-                      }}
+                      className="readonly-input table-input contract-input"
                       defaultValue={deal.contractPrice || ""}
                       disabled={deal.closed === "Yes"}
                       onBlur={(e) => {
@@ -235,7 +220,7 @@ function Wholesale_data({
                 </td>
                 <td>
                   {deal.sellerAccepted === "No" ? (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   ) : (
                     <select
                       className={`badge ${deal.assigned?.toLowerCase()}`}
@@ -254,14 +239,7 @@ function Wholesale_data({
                   {deal.assigned === "Yes" ? (
                     <input
                       type="number"
-                      className="readonly-input small"
-                      style={{
-                        background: "var(--input-bg)",
-                        width: "100px",
-                        padding: "0 12px",
-                        border: "1px solid var(--input-border)",
-                        color: "var(--input-text)",
-                      }}
+                      className="readonly-input table-input contract-input"
                       defaultValue={deal.assignedPrice || ""}
                       disabled={deal.closed === "Yes"}
                       onBlur={(e) => {
@@ -281,29 +259,15 @@ function Wholesale_data({
                       }}
                     />
                   ) : (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   )}
                 </td>
                 <td>
                   {deal.assigned === "Yes" ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "4px",
-                      }}
-                    >
+                    <div className="buyer-info-cell">
                       <input
                         type="text"
-                        className="readonly-input small"
-                        style={{
-                          background: "var(--input-bg)",
-                          width: "120px",
-                          padding: "0 8px",
-                          border: "1px solid var(--input-border)",
-                          color: "var(--input-text)",
-                          fontSize: "0.85em",
-                        }}
+                        className="readonly-input table-input buyer-detail-input"
                         defaultValue={deal.buyerName || ""}
                         disabled={deal.closed === "Yes"}
                         onBlur={(e) =>
@@ -313,15 +277,7 @@ function Wholesale_data({
                       />
                       <input
                         type="email"
-                        className="readonly-input small"
-                        style={{
-                          background: "var(--input-bg)",
-                          width: "120px",
-                          padding: "0 8px",
-                          border: "1px solid var(--input-border)",
-                          color: "var(--input-text)",
-                          fontSize: "0.85em",
-                        }}
+                        className="readonly-input table-input buyer-detail-input"
                         defaultValue={deal.buyerEmail || ""}
                         disabled={deal.closed === "Yes"}
                         onBlur={(e) =>
@@ -331,7 +287,7 @@ function Wholesale_data({
                       />
                     </div>
                   ) : (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   )}
                 </td>
                 <td>
@@ -349,14 +305,14 @@ function Wholesale_data({
                 </td>
                 <td>
                   {deal.closed === "Yes" ? (
-                    <strong style={{ color: "#059669" }}>
+                    <strong className="revenue-value">
                       {currency(
                         Number(deal.assignedPrice || 0) -
                           Number(deal.contractPrice || 0),
                       )}
                     </strong>
                   ) : (
-                    <span style={{ color: "#9ca3af" }}>—</span>
+                    <span className="placeholder-dash">—</span>
                   )}
                 </td>
                 <td>
