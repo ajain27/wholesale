@@ -1,6 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Plus, Users, Sun, Moon } from "lucide-react";
-import { getSavedBuyers, BUYERS_STORAGE_KEY } from "../../utils/utils";
+import {
+  fetchBuyers,
+  saveBuyer,
+  deleteBuyerById,
+} from "../../firebase/firestoreService";
 import BuyerForm from "./BuyerForm";
 import BuyerFilters from "./BuyerFilters";
 import BuyerData from "./BuyerData";
@@ -16,7 +20,7 @@ const emptyBuyerForm = {
 };
 
 function Buyers({ theme, setTheme }) {
-  const [buyers, setBuyers] = useState(getSavedBuyers);
+  const [buyers, setBuyers] = useState([]);
   const [form, setForm] = useState(emptyBuyerForm);
   const [filters, setFilters] = useState({
     state: "All",
@@ -24,17 +28,63 @@ function Buyers({ theme, setTheme }) {
     search: "",
   });
 
-  const persist = function persist(nextBuyers) {
-    setBuyers(nextBuyers);
-    localStorage.setItem(BUYERS_STORAGE_KEY, JSON.stringify(nextBuyers));
-  };
+  useEffect(() => {
+    async function loadBuyers() {
+      try {
+        const data = await fetchBuyers();
+        setBuyers(data);
+      } catch (error) {
+        console.error("Failed to load buyers", error);
+      }
+    }
+
+    loadBuyers();
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function addBuyer(event) {
+  async function updateBuyer(id, field, value) {
+    const cleanedValue =
+      field === "email" ? value.trim().toLowerCase() : value.trim();
+
+    const isDuplicate = buyers.some((buyer) => {
+      if (buyer.id === id) return false;
+      if (field === "email" && cleanedValue) {
+        return buyer.email?.toLowerCase() === cleanedValue;
+      }
+      if (field === "phone" && cleanedValue) {
+        return buyer.phone === cleanedValue;
+      }
+      return false;
+    });
+
+    if (isDuplicate) {
+      alert(
+        `A buyer with this ${field} already exists. Please choose a different ${field}.`,
+      );
+      return;
+    }
+
+    const nextBuyers = buyers.map((buyer) =>
+      buyer.id === id ? { ...buyer, [field]: cleanedValue } : buyer,
+    );
+
+    const updatedBuyer = nextBuyers.find((buyer) => buyer.id === id);
+    if (!updatedBuyer) return;
+
+    try {
+      await saveBuyer(updatedBuyer);
+      setBuyers(nextBuyers);
+    } catch (error) {
+      console.error("Failed to update buyer", error);
+      alert("Unable to update buyer. Check your database connection.");
+    }
+  }
+
+  async function addBuyer(event) {
     event.preventDefault();
 
     if (!form.fullName?.trim() || !form.email?.trim() || !form.state?.trim()) {
@@ -62,14 +112,27 @@ function Buyers({ theme, setTheme }) {
       state: form.state?.trim().toUpperCase() || "",
     };
 
-    persist([...buyers, newBuyer]);
-    setForm(emptyBuyerForm);
+    try {
+      await saveBuyer(newBuyer);
+      setBuyers((prev) => [...prev, newBuyer]);
+      setForm(emptyBuyerForm);
+    } catch (error) {
+      console.error("Failed to save buyer", error);
+      alert("Unable to save buyer. Check your database connection.");
+    }
   }
 
-  function deleteBuyer(id) {
+  async function deleteBuyer(id) {
     const buyer = buyers.find((item) => item.id === id);
     if (!window.confirm(`Delete ${buyer?.fullName || "this buyer"}?`)) return;
-    persist(buyers.filter((b) => b.id !== id));
+
+    try {
+      await deleteBuyerById(id);
+      setBuyers((prev) => prev.filter((b) => b.id !== id));
+    } catch (error) {
+      console.error("Failed to delete buyer", error);
+      alert("Unable to delete buyer. Check your database connection.");
+    }
   }
 
   const states = useMemo(
@@ -168,7 +231,7 @@ function Buyers({ theme, setTheme }) {
         filteredBuyers={filteredBuyers}
         buyers={buyers}
         deleteBuyer={deleteBuyer}
-        persist={persist}
+        updateBuyer={updateBuyer}
       />
     </>
   );

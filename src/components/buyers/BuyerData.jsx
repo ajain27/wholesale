@@ -3,9 +3,10 @@ import { ReadOnlyCell } from "../elements";
 import { Trash2, Edit2, Check } from "lucide-react";
 import Pagination from "../pagination/Pagination";
 
-function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
-  const [editingEmailId, setEditingEmailId] = useState(null);
-  const [editEmailValue, setEditEmailValue] = useState("");
+function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
+  const [editingBuyerId, setEditingBuyerId] = useState(null);
+  const [editingField, setEditingField] = useState(null);
+  const [editFieldValue, setEditFieldValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 10;
@@ -16,21 +17,18 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
   const endIndex = Math.min(startIndex + itemsPerPage, filteredBuyers.length);
   const paginatedBuyers = filteredBuyers.slice(startIndex, endIndex);
 
-  function updateBuyer(id, field, value) {
-    const nextBuyers = buyers.map((buyer) =>
-      buyer.id === id ? { ...buyer, [field]: value } : buyer,
-    );
-    persist(nextBuyers);
+  function startEditingField(buyer, field) {
+    setEditingBuyerId(buyer.id);
+    setEditingField(field);
+    setEditFieldValue(buyer[field] || "");
   }
 
-  function startEditingEmail(buyer) {
-    setEditingEmailId(buyer.id);
-    setEditEmailValue(buyer.email || "");
-  }
-
-  function saveEmail(id) {
-    updateBuyer(id, "email", editEmailValue);
-    setEditingEmailId(null);
+  function saveField(id) {
+    if (!editingField) return;
+    updateBuyer(id, editingField, editFieldValue);
+    setEditingBuyerId(null);
+    setEditingField(null);
+    setEditFieldValue("");
   }
 
   return (
@@ -52,7 +50,7 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
               <tr key={buyer.id}>
                 <ReadOnlyCell value={buyer.fullName} wide />
                 <td>
-                  {editingEmailId === buyer.id ? (
+                  {editingBuyerId === buyer.id && editingField === "email" ? (
                     <div
                       style={{
                         display: "flex",
@@ -70,17 +68,20 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                           borderRadius: "6px",
                           outline: "none",
                         }}
-                        value={editEmailValue}
-                        onChange={(e) => setEditEmailValue(e.target.value)}
+                        value={editFieldValue}
+                        onChange={(e) => setEditFieldValue(e.target.value)}
                         autoFocus
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") saveEmail(buyer.id);
-                          if (e.key === "Escape") setEditingEmailId(null);
+                          if (e.key === "Enter") saveField(buyer.id);
+                          if (e.key === "Escape") {
+                            setEditingBuyerId(null);
+                            setEditingField(null);
+                          }
                         }}
                       />
                       <button
                         className="ghost-btn"
-                        onClick={() => saveEmail(buyer.id)}
+                        onClick={() => saveField(buyer.id)}
                         style={{
                           width: "32px",
                           height: "32px",
@@ -108,7 +109,7 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                       />
                       <button
                         className="ghost-btn"
-                        onClick={() => startEditingEmail(buyer)}
+                        onClick={() => startEditingField(buyer, "email")}
                         style={{
                           width: "32px",
                           height: "32px",
@@ -129,12 +130,80 @@ function BuyerData({ filteredBuyers, buyers, deleteBuyer, persist }) {
                   <ReadOnlyCell value={buyer.city} />
                 </td>
                 <td>
-                  <input
-                    id={`readonly-phone-${buyer.id}`}
-                    className="readonly-input"
-                    readOnly
-                    value={buyer.phone || ""}
-                  />
+                  {editingBuyerId === buyer.id && editingField === "phone" ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "6px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <input
+                        id={`edit-phone-${buyer.id}`}
+                        style={{
+                          width: "180px",
+                          height: "36px",
+                          padding: "0 8px",
+                          border: "1px solid var(--blue)",
+                          borderRadius: "6px",
+                          outline: "none",
+                        }}
+                        value={editFieldValue}
+                        onChange={(e) => setEditFieldValue(e.target.value)}
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveField(buyer.id);
+                          if (e.key === "Escape") {
+                            setEditingBuyerId(null);
+                            setEditingField(null);
+                          }
+                        }}
+                      />
+                      <button
+                        className="ghost-btn"
+                        onClick={() => saveField(buyer.id)}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          minWidth: "32px",
+                          padding: 0,
+                        }}
+                        title="Save"
+                      >
+                        <Check size={16} color="var(--green)" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "6px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <input
+                        id={`readonly-phone-${buyer.id}`}
+                        className="readonly-input"
+                        readOnly
+                        value={buyer.phone || ""}
+                      />
+                      <button
+                        className="ghost-btn"
+                        onClick={() => startEditingField(buyer, "phone")}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          minWidth: "32px",
+                          padding: 0,
+                          border: "none",
+                          background: "transparent",
+                        }}
+                        title="Edit Phone"
+                      >
+                        <Edit2 size={16} color="var(--muted)" />
+                      </button>
+                    </div>
+                  )}
                 </td>
                 <td>
                   <button

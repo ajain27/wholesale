@@ -5,7 +5,13 @@ import { useState, useEffect } from "react";
 import Pagination from "../pagination/Pagination";
 import Modal from "../modal/Modal";
 
-function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
+function Wholesale_data({
+  filteredDeals,
+  deals,
+  deleteDeal,
+  persist,
+  saveProperty,
+}) {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [notesDraft, setNotesDraft] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,12 +39,11 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
     }
   };
 
-  function updateDeal(id, field, value) {
+  async function updateDeal(id, field, value) {
     const deal = deals.find((d) => d.id === id);
 
     // Business Rule: Enforce the "Closed" requirements even on updates
     if (field === "closed" && value === "Yes") {
-      const deal = deals.find((d) => d.id === id);
       const canClose = deal.sellerAccepted === "Yes" && deal.assigned === "Yes";
 
       if (!canClose) {
@@ -53,7 +58,14 @@ function Wholesale_data({ filteredDeals, deals, deleteDeal, persist }) {
       deal.id === id ? { ...deal, [field]: value } : deal,
     );
 
-    persist(nextDeals);
+    const updatedDeal = nextDeals.find((deal) => deal.id === id);
+    try {
+      await saveProperty(updatedDeal);
+      persist(nextDeals);
+    } catch (error) {
+      console.error("Failed to update property", error);
+      alert("Unable to update property. Check your database connection.");
+    }
   }
 
   return (

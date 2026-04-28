@@ -1,12 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  RefreshCw,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { RefreshCw, Moon, Sun } from "lucide-react";
 import "../../css/styles.css";
-import { getSavedDeals, getSavedBuyers, BUYERS_STORAGE_KEY } from "../../utils/utils";
+import {
+  fetchDeals,
+  fetchBuyers,
+  saveDeal,
+  saveBuyer,
+  deleteDealById,
+} from "../../firebase/firestoreService";
 import Wholesale_form from "./wholesale_form";
 import Wholesale_data from "./Wholesale_data";
 import Wholesale_filters from "./Wholesale_filters";
@@ -35,10 +37,10 @@ const emptyForm = {
   closedInMonth: "",
 };
 
-const STORAGE_KEY = "wholesale-real-estate-crm-v2";
-
 function Wholesale() {
-  const [theme, setTheme] = useState(() => localStorage.getItem("crmTheme") || "light");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("crmTheme") || "light",
+  );
   const [activeView, setActiveView] = useState("dashboard");
 
   useEffect(() => {
@@ -49,7 +51,9 @@ function Wholesale() {
       document.documentElement.classList.remove("dark");
     }
   }, [theme]);
-  const [deals, setDeals] = useState(getSavedDeals);
+  const [deals, setDeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [form, setForm] = useState(emptyForm);
   const [filters, setFilters] = useState({
     state: "All",
@@ -65,8 +69,27 @@ function Wholesale() {
 
   const persist = function persist(nextDeals) {
     setDeals(nextDeals);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextDeals));
   };
+
+  async function loadDeals() {
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+      const data = await fetchDeals();
+      setDeals(data);
+    } catch (error) {
+      console.error("Failed to load deals", error);
+      setErrorMessage(
+        "Unable to load deals. Check your Firebase connection and Firestore rules.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadDeals();
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -76,9 +99,7 @@ function Wholesale() {
     if (name === "state" && /[^a-zA-Z]/.test(value)) return;
 
     if (name === "closed" && value === "Yes") {
-      const isReady =
-        form.sellerAccepted === "Yes" &&
-        form.assigned === "Yes";
+      const isReady = form.sellerAccepted === "Yes" && form.assigned === "Yes";
 
       if (!isReady) {
         alert(
@@ -118,7 +139,8 @@ function Wholesale() {
       if (numericValue) {
         const numVal = parseInt(numericValue, 10);
 
-        const parseNumber = (val) => Number(String(val || "0").replace(/[^0-9]/g, ""));
+        const parseNumber = (val) =>
+          Number(String(val || "0").replace(/[^0-9]/g, ""));
         const currentVals = {
           arv: parseNumber(form.arv),
           rehabCost: parseNumber(form.rehabCost),
@@ -149,24 +171,27 @@ function Wholesale() {
             alert("Rehab cost cannot be more than MAO.");
             setForm((prev) => ({ ...prev, [name]: "" }));
             return;
-        }
-          if (currentVals.contractPrice > 0 && currentVals.assignedPrice > 0 && currentVals.assignedPrice < currentVals.contractPrice) {
-            alert("Assigned price needs to be more than or equal to contract price.");
+          }
+          if (
+            currentVals.contractPrice > 0 &&
+            currentVals.assignedPrice > 0 &&
+            currentVals.assignedPrice < currentVals.contractPrice
+          ) {
+            alert(
+              "Assigned price needs to be more than or equal to contract price.",
+            );
             setForm((prev) => ({ ...prev, [name]: "" }));
             return;
           }
         }
 
-
-
-        const formatted =
-          "$" + numVal.toLocaleString("en-US");
+        const formatted = "$" + numVal.toLocaleString("en-US");
         setForm((prev) => ({ ...prev, [name]: formatted }));
       }
     }
   }
 
-  function addDeal(event) {
+  async function addDeal(event) {
     event.preventDefault();
 
     // Basic Validation
@@ -188,12 +213,30 @@ function Wholesale() {
     const rehabNum = parseNumber(form.rehabCost);
 
     if (arvNum > 0) {
-      if (rehabNum > arvNum) { alert("Rehab cost cannot be more than ARV."); return; }
-      if (maoNum > arvNum) { alert("MAO cannot be more than ARV."); return; }
-      if (contractNum > arvNum) { alert("Contract price cannot be more than ARV."); return; }
+      if (rehabNum > arvNum) {
+        alert("Rehab cost cannot be more than ARV.");
+        return;
+      }
+      if (maoNum > arvNum) {
+        alert("MAO cannot be more than ARV.");
+        return;
+      }
+      if (contractNum > arvNum) {
+        alert("Contract price cannot be more than ARV.");
+        return;
+      }
     }
-    if (maoNum > 0 && rehabNum > maoNum) { alert("Rehab cost cannot be more than MAO."); return; }
-    if (contractNum > 0 && assignedNum > 0 && assignedNum < contractNum) { alert("Assigned price needs to be more than or equal to contract price."); return; }
+    if (maoNum > 0 && rehabNum > maoNum) {
+      alert("Rehab cost cannot be more than MAO.");
+      return;
+    }
+    if (contractNum > 0 && assignedNum > 0 && assignedNum < contractNum) {
+      alert("Assigned price needs to be more than or equal to contract price.");
+      return;
+    }
+
+    const profitNum =
+      assignedNum > 0 && contractNum > 0 ? assignedNum - contractNum : 0;
 
     const newDeal = {
       ...form,
@@ -205,39 +248,57 @@ function Wholesale() {
       mao: parseNumber(form.mao),
       contractPrice: parseNumber(form.contractPrice),
       assignedPrice: parseNumber(form.assignedPrice),
+      profit: profitNum,
       buyerName: form.buyerName?.trim() || "",
       buyerEmail: form.buyerEmail?.trim().toLowerCase() || "",
       closedInMonth: form.closedInMonth || "",
     };
 
-    if (form.assigned === "Yes" && form.buyerEmail?.trim() && form.buyerName?.trim()) {
-      const existingBuyers = getSavedBuyers();
-      const newEmail = form.buyerEmail.trim().toLowerCase();
-      
-      const isDuplicate = existingBuyers.some((b) => b.email?.toLowerCase() === newEmail);
-      if (!isDuplicate) {
-        const newBuyer = {
-          id: crypto.randomUUID(),
-          fullName: form.buyerName.trim(),
-          email: newEmail,
-          phone: "",
-          city: form.city.trim(),
-          state: form.state.trim().toUpperCase(),
-          realEstateType: "Single Family",
-        };
-        localStorage.setItem(BUYERS_STORAGE_KEY, JSON.stringify([...existingBuyers, newBuyer]));
+    try {
+      if (
+        form.assigned === "Yes" &&
+        form.buyerEmail?.trim() &&
+        form.buyerName?.trim()
+      ) {
+        const existingBuyers = await fetchBuyers();
+        const newEmail = form.buyerEmail.trim().toLowerCase();
+        const isDuplicate = existingBuyers.some(
+          (b) => b.email?.toLowerCase() === newEmail,
+        );
+        if (!isDuplicate) {
+          const newBuyer = {
+            id: crypto.randomUUID(),
+            fullName: form.buyerName.trim(),
+            email: newEmail,
+            phone: "",
+            city: form.city.trim(),
+            state: form.state.trim().toUpperCase(),
+            realEstateType: "Single Family",
+          };
+          await saveBuyer(newBuyer);
+        }
       }
-    }
 
-    // Push to end of array to show at the bottom
-    persist([...deals, newDeal]);
-    setForm(emptyForm);
+      await saveDeal(newDeal);
+      setDeals((prevDeals) => [...prevDeals, newDeal]);
+      setForm(emptyForm);
+    } catch (error) {
+      console.error("Failed to save deal", error);
+      alert("Unable to save deal. Check your database connection.");
+    }
   }
 
-  function deleteDeal(id) {
+  async function deleteDeal(id) {
     const deal = deals.find((item) => item.id === id);
     if (!window.confirm(`Delete ${deal?.address || "this deal"}?`)) return;
-    persist(deals.filter((deal) => deal.id !== id));
+
+    try {
+      await deleteDealById(id);
+      setDeals((prevDeals) => prevDeals.filter((deal) => deal.id !== id));
+    } catch (error) {
+      console.error("Failed to delete deal", error);
+      alert("Unable to delete deal. Check your database connection.");
+    }
   }
 
   const states = useMemo(
@@ -259,19 +320,29 @@ function Wholesale() {
         deals
           .map((d) => (d.offerDate ? d.offerDate.substring(0, 4) : null))
           .filter(Boolean)
-          .sort()
+          .sort(),
       ),
     ],
-    [deals]
+    [deals],
   );
 
   const months = useMemo(
     () => [
       "All",
-      "01", "02", "03", "04", "05", "06",
-      "07", "08", "09", "10", "11", "12",
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
     ],
-    []
+    [],
   );
   const filteredDeals = useMemo(() => {
     const query = filters.search.toLowerCase();
@@ -306,11 +377,16 @@ function Wholesale() {
       const dealYear = deal.offerDate ? deal.offerDate.substring(0, 4) : "";
       const matchesYear = filters.year === "All" || dealYear === filters.year;
 
-      const dealOfferMonth = deal.offerDate ? deal.offerDate.substring(5, 7) : "";
-      const matchesOfferMonth = filters.offerMonth === "All" || dealOfferMonth === filters.offerMonth;
+      const dealOfferMonth = deal.offerDate
+        ? deal.offerDate.substring(5, 7)
+        : "";
+      const matchesOfferMonth =
+        filters.offerMonth === "All" || dealOfferMonth === filters.offerMonth;
 
       const dealClosedMonth = deal.closedInMonth || "";
-      const matchesClosedMonth = filters.closedMonth === "All" || dealClosedMonth === filters.closedMonth;
+      const matchesClosedMonth =
+        filters.closedMonth === "All" ||
+        dealClosedMonth === filters.closedMonth;
 
       return (
         matchesState &&
@@ -328,21 +404,48 @@ function Wholesale() {
 
   return (
     <div className="layout">
-      <Sidebar activeView={activeView} setActiveView={setActiveView} theme={theme} setTheme={setTheme} />
+      <Sidebar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        theme={theme}
+        setTheme={setTheme}
+      />
 
       <main className="main">
         {activeView === "dashboard" ? (
           <>
             <header className="page-header">
               <div>
-                <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>Lead Pipeline</h1>
+                <h1 style={{ color: theme === "dark" ? "#ffffff" : "#1769e8" }}>
+                  Lead Pipeline
+                </h1>
                 <span>
                   Track and manage your real estate leads and deals locally.
                 </span>
               </div>
-              <button 
-                className="theme-toggle ghost-btn" 
-                style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0 }}
+              <button
+                className="theme-toggle ghost-btn"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  flexShrink: 0,
+                  marginRight: "10px",
+                }}
+                onClick={loadDeals}
+                title="Refresh Firebase data"
+              >
+                <RefreshCw size={18} />
+              </button>
+
+              <button
+                className="theme-toggle ghost-btn"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  flexShrink: 0,
+                }}
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 title="Toggle Theme"
               >
@@ -350,7 +453,17 @@ function Wholesale() {
               </button>
             </header>
 
-            <StatsGrid deals={deals} filteredDeals={filteredDeals} filters={filters} />
+            {isLoading && (
+              <div className="info-banner">Loading deals from Firebase...</div>
+            )}
+
+            {errorMessage && <div className="error-banner">{errorMessage}</div>}
+
+            <StatsGrid
+              deals={deals}
+              filteredDeals={filteredDeals}
+              filters={filters}
+            />
 
             <Wholesale_form
               addDeal={addDeal}
@@ -372,6 +485,7 @@ function Wholesale() {
               deals={deals}
               deleteDeal={deleteDeal}
               persist={persist}
+              saveDeal={saveDeal}
             />
           </>
         ) : (
