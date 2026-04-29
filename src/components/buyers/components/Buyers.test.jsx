@@ -77,4 +77,39 @@ describe("Buyers component", () => {
 
     alertSpy.mockRestore();
   });
+
+  it("filters buyers as soon as the user types in search", async () => {
+    fetchBuyers.mockResolvedValue([
+      {
+        id: "b1",
+        fullName: "Jane Doe",
+        email: "jane@example.com",
+        city: "Austin",
+        state: "TX",
+      },
+      {
+        id: "b2",
+        fullName: "John Smith",
+        email: "john@example.com",
+        city: "Dallas",
+        state: "TX",
+      },
+    ]);
+
+    render(<Buyers theme="light" setTheme={vi.fn()} />);
+
+    await screen.findByDisplayValue("Jane Doe");
+    expect(screen.getByDisplayValue("John Smith")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle("Search"));
+    fireEvent.change(
+      screen.getByPlaceholderText(/Search buyers by name, email, phone, city/i),
+      {
+        target: { value: "john" },
+      },
+    );
+
+    expect(screen.getByDisplayValue("John Smith")).toBeInTheDocument();
+    expect(screen.queryByDisplayValue("Jane Doe")).not.toBeInTheDocument();
+  });
 });

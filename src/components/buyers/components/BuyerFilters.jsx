@@ -1,9 +1,16 @@
 import { Search, RefreshCw } from "lucide-react";
 import { Select } from "../../elements";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function BuyerFilters({ filters, states, setFilters }) {
-  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(Boolean(filters.search));
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (searchExpanded) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchExpanded]);
 
   const handleFilter = (e) => {
     const { name, value } = e.target;
@@ -27,14 +34,20 @@ function BuyerFilters({ filters, states, setFilters }) {
           <button
             type="button"
             className="search-icon-btn"
-            onClick={() => setSearchExpanded(!searchExpanded)}
+            onClick={() => {
+              if (searchExpanded && filters.search) {
+                searchInputRef.current?.focus();
+                return;
+              }
+              setSearchExpanded((prev) => !prev);
+            }}
             title="Search"
           >
             <Search size={18} />
           </button>
           {searchExpanded && (
             <input
-              autoFocus
+              ref={searchInputRef}
               type="text"
               className="search-input-expanded"
               id="buyer-search"
