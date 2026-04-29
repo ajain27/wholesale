@@ -70,14 +70,39 @@ function Wholesale_form({
             required
           />
           <Field
-            label="MAO"
-            name="mao"
+            label="Desired Profit"
+            name="desiredProfit"
             type="text"
-            value={form.mao}
+            value={form.desiredProfit}
             onChange={handleChange}
             onBlur={handleBlur}
             required
           />
+          <label className="field">
+            <span>
+              MAO
+              <span className="required-marker">*</span>
+            </span>
+            <input
+              required
+              name="mao"
+              type="text"
+              value={form.mao}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder={(() => {
+                const parseNumber = (val) =>
+                  Number(String(val).replace(/[^0-9]/g, ""));
+                const arv = parseNumber(form.arv);
+                const rehab = parseNumber(form.rehabCost);
+                const profit = parseNumber(form.desiredProfit);
+                const calculated = arv * 0.7 - rehab - profit;
+                return calculated > 0
+                  ? `Suggested MAO: $${calculated.toLocaleString()}`
+                  : "";
+              })()}
+            />
+          </label>
           <Select
             label="Offer Status"
             name="offerStatus"

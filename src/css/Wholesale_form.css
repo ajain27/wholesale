@@ -40,6 +40,10 @@
   color: var(--text);
   outline: none;
 }
+.field input::placeholder {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
 .form-btn {
   height: 44px;
   grid-column: 1 / -1;

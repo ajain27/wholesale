@@ -24,6 +24,7 @@ const emptyForm = {
   state: "",
   arv: "",
   rehabCost: "",
+  desiredProfit: "",
   mao: "",
   offerStatus: "Not Sent",
   offerDate: "",
@@ -114,6 +115,7 @@ function Wholesale() {
     const currencyFields = [
       "arv",
       "rehabCost",
+      "desiredProfit",
       "mao",
       "contractPrice",
       "assignedPrice",
@@ -132,6 +134,7 @@ function Wholesale() {
     const currencyFields = [
       "arv",
       "rehabCost",
+      "desiredProfit",
       "mao",
       "contractPrice",
       "assignedPrice",
@@ -295,8 +298,10 @@ function Wholesale() {
     const profitNum =
       assignedNum > 0 && contractNum > 0 ? assignedNum - contractNum : 0;
 
+    const { desiredProfit, ...formWithoutProfit } = form;
+
     const newDeal = {
-      ...form,
+      ...formWithoutProfit,
       id: crypto.randomUUID(),
       state: form.state.trim().toUpperCase(),
       zipCode: form.zipCode.trim(),
