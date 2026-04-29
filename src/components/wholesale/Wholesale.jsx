@@ -483,14 +483,6 @@ function Wholesale() {
                 </span>
               </div>
               <button
-                className="theme-toggle ghost-btn refresh-btn"
-                onClick={loadDeals}
-                title="Refresh Firebase data"
-              >
-                <RefreshCw size={18} />
-              </button>
-
-              <button
                 className="theme-toggle ghost-btn"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 title="Toggle Theme"
@@ -498,10 +490,6 @@ function Wholesale() {
                 {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
               </button>
             </header>
-
-            {isLoading && (
-              <div className="info-banner">Loading deals from Firebase...</div>
-            )}
 
             {errorMessage && <div className="error-banner">{errorMessage}</div>}
 
@@ -528,9 +516,15 @@ function Wholesale() {
               setFilters={setFilters}
             />
             <LoadingScreen
-              isLoading={tableLoading}
+              isLoading={isLoading || tableLoading}
               minDuration={300}
-              loadingContent={<span>Loading updated deal data...</span>}
+              loadingContent={
+                <span>
+                  {isLoading
+                    ? "Loading deals from Firebase..."
+                    : "Loading updated deal data..."}
+                </span>
+              }
             >
               <Wholesale_data
                 filteredDeals={filteredDeals}

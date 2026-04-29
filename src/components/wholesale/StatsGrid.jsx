@@ -16,6 +16,9 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
   const closedDeals = filteredDeals.filter(
     (deal) => deal.closed === "Yes",
   ).length;
+  const activeDeals = filteredDeals.filter(
+    (deal) => deal.closed !== "Yes",
+  ).length;
 
   const totalGrossRevenue = filteredDeals
     .filter(
@@ -66,6 +69,13 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
         label="Offers Made"
         subtitle="Current month"
         value={offersThisMonth}
+        max={Math.max(10, offersThisMonth * 2)}
+        colorTheme="green"
+      />
+      <GaugeStat
+        label="Active Deals"
+        // subtitle="Current month"
+        value={activeDeals}
         max={Math.max(10, offersThisMonth * 2)}
         colorTheme="orange"
       />
