@@ -8,14 +8,14 @@ import {
 } from "@testing-library/react";
 import Buyers from "./Buyers";
 
-vi.mock("../../firebase/firestoreService", () => ({
+vi.mock("../../../firebase/firestoreService", () => ({
   fetchBuyers: vi.fn().mockResolvedValue([]),
   saveBuyer: vi.fn().mockResolvedValue(undefined),
   deleteBuyerById: vi.fn().mockResolvedValue(undefined),
 }));
 
 const { fetchBuyers, saveBuyer } =
-  await import("../../firebase/firestoreService");
+  await import("../../../firebase/firestoreService");
 
 beforeEach(() => {
   vi.clearAllMocks();

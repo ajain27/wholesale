@@ -4,11 +4,11 @@ import {
   fetchBuyers,
   saveBuyer,
   deleteBuyerById,
-} from "../../firebase/firestoreService";
+} from "../../../firebase/firestoreService";
 import BuyerForm from "./BuyerForm";
 import BuyerFilters from "./BuyerFilters";
 import BuyerData from "./BuyerData";
-import { SimpleStat } from "../elements";
+import { SimpleStat } from "../../elements";
 
 const emptyBuyerForm = {
   fullName: "",
@@ -171,7 +171,12 @@ function Buyers({ theme, setTheme }) {
       const matchesSearch =
         !query ||
         (() => {
-          const searchText = [buyer.fullName, buyer.email, buyer.phone, buyer.city]
+          const searchText = [
+            buyer.fullName,
+            buyer.email,
+            buyer.phone,
+            buyer.city,
+          ]
             .join(" ")
             .toLowerCase()
             .replace(/,/g, "");

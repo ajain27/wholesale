@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ReadOnlyCell } from "../elements";
+import { ReadOnlyCell } from "../../elements";
 import { Trash2, Edit2, Check } from "lucide-react";
-import Pagination from "../pagination/Pagination";
+import Pagination from "../../pagination/Pagination";
 
 function BuyerData({ filteredBuyers, buyers, deleteBuyer, updateBuyer }) {
   const [editingBuyerId, setEditingBuyerId] = useState(null);

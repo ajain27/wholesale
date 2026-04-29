@@ -1,9 +1,9 @@
 @import "./variables.css";
 @import "./base.css";
-@import "./Sidebar.css";
-@import "./Stats.css";
-@import "./Wholesale_form.css";
-@import "./Wholesale_filters.css";
-@import "./Wholesale_data.css";
-@import "./Pagination.css";
-@import "./Modal.css";
+@import "../components/sidebar/Sidebar.css";
+@import "../components/stats/Stats.css";
+@import "../components/wholesale/css/Wholesale_form.css";
+@import "../components/wholesale/css/Wholesale_filters.css";
+@import "../components/wholesale/css/Wholesale_data.css";
+@import "../components/pagination/Pagination.css";
+@import "../components/modal/Modal.css";

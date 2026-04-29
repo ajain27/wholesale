@@ -1,21 +1,21 @@
 import { useMemo, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { RefreshCw, Moon, Sun } from "lucide-react";
-import "../../css/styles.css";
+import "../../../css/styles.css";
 import {
   fetchDeals,
   fetchBuyers,
   saveDeal,
   saveBuyer,
   deleteDealById,
-} from "../../firebase/firestoreService";
+} from "../../../firebase/firestoreService";
+import Wholesale_filters from "./Wholesale_filters";
 import Wholesale_form from "./wholesale_form";
 import Wholesale_data from "./Wholesale_data";
-import Wholesale_filters from "./Wholesale_filters";
-import Buyers from "../buyers/Buyers";
-import Sidebar from "../Sidebar";
-import StatsGrid from "./StatsGrid";
-import LoadingScreen from "../LoadingScreen";
+import Buyers from "../../buyers/components/Buyers";
+import Sidebar from "../../sidebar/Sidebar";
+import StatsGrid from "../../stats/StatsGrid";
+import LoadingScreen from "../../loader/LoadingScreen";
 
 const emptyForm = {
   address: "",

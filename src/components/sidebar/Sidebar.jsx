@@ -1,5 +1,5 @@
-import { Home, Users, Moon, Sun } from "lucide-react";
-import logo from "../assets/logo.png";
+import { Home, Users } from "lucide-react";
+import logo from "../../assets/logo.png";
 
 function Sidebar({ activeView, setActiveView, theme }) {
   return (
