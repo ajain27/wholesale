@@ -1,5 +1,6 @@
 import { Search, Plus } from "lucide-react";
 import { Select } from "../elements";
+import { useState } from "react";
 
 function Wholesale_filters({
   filters,
@@ -9,12 +10,40 @@ function Wholesale_filters({
   RefreshCw,
   setFilters,
 }) {
+  const [searchExpanded, setSearchExpanded] = useState(false);
   return (
     <div>
       <section className="panel board-panel">
         <div className="panel-header">
           <div>
             <h2>Filter Lead</h2>
+          </div>
+          <div className="search-container">
+            <button
+              type="button"
+              className="search-icon-btn"
+              onClick={() => setSearchExpanded(!searchExpanded)}
+              title="Search"
+            >
+              <Search size={18} />
+            </button>
+            {searchExpanded && (
+              <input
+                autoFocus
+                type="text"
+                className="search-input-expanded"
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters({ ...filters, search: e.target.value })
+                }
+                onBlur={() => {
+                  if (!filters.search) {
+                    setSearchExpanded(false);
+                  }
+                }}
+                placeholder="Search Deals..."
+              />
+            )}
           </div>
         </div>
         <div className="filters">
@@ -93,17 +122,6 @@ function Wholesale_filters({
           >
             <RefreshCw size={16} /> Clear Filters
           </button>
-          <label className="search-field">
-            <Search size={18} />
-            <input
-              value={filters.search}
-              id="search"
-              onChange={(e) =>
-                setFilters({ ...filters, search: e.target.value })
-              }
-              placeholder="Search by address, city, or zip code..."
-            />
-          </label>
         </div>
       </section>
     </div>

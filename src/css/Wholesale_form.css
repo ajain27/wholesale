@@ -7,6 +7,9 @@
 }
 .panel-header {
   padding: 22px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 .add-form {
   padding: 22px 24px 24px;

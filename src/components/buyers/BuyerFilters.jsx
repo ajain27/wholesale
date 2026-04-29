@@ -1,7 +1,10 @@
 import { Search, RefreshCw } from "lucide-react";
 import { Select } from "../elements";
+import { useState } from "react";
 
 function BuyerFilters({ filters, states, setFilters }) {
+  const [searchExpanded, setSearchExpanded] = useState(false);
+
   const handleFilter = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -20,19 +23,35 @@ function BuyerFilters({ filters, states, setFilters }) {
         <div>
           <h2>Filter Buyer</h2>
         </div>
+        <div className="search-container">
+          <button
+            type="button"
+            className="search-icon-btn"
+            onClick={() => setSearchExpanded(!searchExpanded)}
+            title="Search"
+          >
+            <Search size={18} />
+          </button>
+          {searchExpanded && (
+            <input
+              autoFocus
+              type="text"
+              className="search-input-expanded"
+              id="buyer-search"
+              name="search"
+              placeholder="Search buyers by name, email, phone, city..."
+              value={filters.search}
+              onChange={handleFilter}
+              onBlur={() => {
+                if (!filters.search) {
+                  setSearchExpanded(false);
+                }
+              }}
+            />
+          )}
+        </div>
       </div>
       <div className="filters">
-        <label className="search-field">
-          <Search size={18} />
-          <input
-            id="buyer-search"
-            type="text"
-            name="search"
-            placeholder="Search buyers by name, email, phone, city..."
-            value={filters.search}
-            onChange={handleFilter}
-          />
-        </label>
         <Select
           label="Filter by State"
           name="state"

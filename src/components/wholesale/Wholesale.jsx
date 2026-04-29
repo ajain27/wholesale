@@ -427,18 +427,34 @@ function Wholesale() {
         filters.closed === "All" || deal.closed === filters.closed;
       const matchesSearch =
         !query ||
-        [
-          deal.address,
-          deal.city,
-          deal.zipCode,
-          deal.state,
-          deal.offerStatus,
-          deal.notes,
-          deal.closed,
-        ]
-          .join(" ")
-          .toLowerCase()
-          .includes(query);
+        (() => {
+          const searchText = [
+            deal.address,
+            deal.city,
+            deal.zipCode,
+            deal.state,
+            deal.offerStatus,
+            deal.notes,
+            deal.closed,
+            deal.arv ? "$" + deal.arv.toLocaleString("en-US") : "",
+            deal.rehabCost ? "$" + deal.rehabCost.toLocaleString("en-US") : "",
+            deal.mao ? "$" + deal.mao.toLocaleString("en-US") : "",
+            deal.contractPrice
+              ? "$" + deal.contractPrice.toLocaleString("en-US")
+              : "",
+            deal.assignedPrice
+              ? "$" + deal.assignedPrice.toLocaleString("en-US")
+              : "",
+          ]
+            .join(" ")
+            .toLowerCase()
+            .replace(/,/g, "");
+          const searchTerms = query
+            .split(/\s+/)
+            .filter(Boolean)
+            .map((term) => term.replace(/,/g, ""));
+          return searchTerms.every((term) => searchText.includes(term));
+        })();
 
       const dealYear = deal.offerDate ? deal.offerDate.substring(0, 4) : "";
       const matchesYear = filters.year === "All" || dealYear === filters.year;

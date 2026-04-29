@@ -170,10 +170,17 @@ function Buyers({ theme, setTheme }) {
         buyer.realEstateType === filters.realEstateType;
       const matchesSearch =
         !query ||
-        [buyer.fullName, buyer.email, buyer.phone, buyer.city]
-          .join(" ")
-          .toLowerCase()
-          .includes(query);
+        (() => {
+          const searchText = [buyer.fullName, buyer.email, buyer.phone, buyer.city]
+            .join(" ")
+            .toLowerCase()
+            .replace(/,/g, "");
+          const searchTerms = query
+            .split(/\s+/)
+            .filter(Boolean)
+            .map((term) => term.replace(/,/g, ""));
+          return searchTerms.every((term) => searchText.includes(term));
+        })();
 
       return matchesState && matchesType && matchesSearch;
     });
