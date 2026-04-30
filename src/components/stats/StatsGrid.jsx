@@ -61,7 +61,7 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
     <section className="stats-grid">
       <SimpleStat
         icon={<ClipboardList size={20} />}
-        label="Total Deals"
+        label="Total Dealsss"
         subtitle="All time"
         value={deals.length}
       />
