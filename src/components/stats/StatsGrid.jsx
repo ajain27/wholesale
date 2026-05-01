@@ -42,13 +42,12 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
       0,
     );
 
-  const overallGrossRevenue = revenueEligibleDeals
-    .reduce(
-      (total, deal) =>
-        total +
-        (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)),
-      0,
-    );
+  const overallGrossRevenue = revenueEligibleDeals.reduce(
+    (total, deal) =>
+      total +
+      (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)),
+    0,
+  );
 
   const filteredDealsRevenue = filteredDeals
     .filter(
@@ -100,7 +99,7 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
         subtitle="Current month"
         value={offersThisMonth}
         max={Math.max(10, offersThisMonth * 2)}
-        colorTheme="green"
+        colorTheme="orange"
       />
       <GaugeStat
         label="Active Deals"
@@ -135,18 +134,21 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
         label={`${currentMonthLabel} Gross Revenue`}
         subtitle="Closed deals this month"
         value={currency(currentMonthGrossRevenue)}
+        colorTheme="green"
       />
       <SimpleStat
         icon={<DollarSign size={20} />}
         label="Overall Revenue"
         subtitle="All closed deals"
         value={currency(overallGrossRevenue)}
+        colorTheme="green"
       />
       <SimpleStat
         icon={<DollarSign size={20} />}
         label={revenueLabel}
         subtitle="Current filters"
         value={currency(filteredDealsRevenue)}
+        colorTheme="green"
       />
     </section>
   );

@@ -20,6 +20,17 @@
   justify-content: space-between;
   gap: 16px;
 }
+.simple-stat-themed {
+  border: none;
+}
+.simple-stat-themed .simple-header p,
+.simple-stat-themed .small-icon,
+.simple-stat-themed strong {
+  color: #111827;
+}
+.simple-stat-themed .subtitle {
+  color: rgba(0, 0, 0, 0.6);
+}
 .simple-header {
   display: flex;
   justify-content: space-between;

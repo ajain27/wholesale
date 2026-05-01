@@ -1,6 +1,8 @@
-export function SimpleStat({ icon, label, value, subtitle }) {
+export function SimpleStat({ icon, label, value, subtitle, colorTheme }) {
   return (
-    <article className="stat-card simple-stat">
+    <article
+      className={`stat-card simple-stat ${colorTheme ? `theme-${colorTheme} simple-stat-themed` : ""}`}
+    >
       <div className="simple-header">
         <div>
           <p>{label}</p>
