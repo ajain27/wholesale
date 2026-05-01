@@ -122,6 +122,65 @@ function Wholesale() {
       return;
     }
 
+    if (name === "offerStatus") {
+      setForm((prev) => ({
+        ...prev,
+        offerStatus: value,
+        ...(value === "Not Sent"
+          ? {
+              offerDate: "",
+              sellerAccepted: "No",
+              contractPrice: "",
+              assigned: "No",
+              assignedPrice: "",
+              buyerName: "",
+              buyerEmail: "",
+              closed: "No",
+              closedDate: "",
+              closedInMonth: "",
+            }
+          : {}),
+      }));
+      return;
+    }
+
+    if (name === "sellerAccepted") {
+      setForm((prev) => ({
+        ...prev,
+        sellerAccepted: value,
+        ...(value !== "Yes"
+          ? {
+              assigned: "No",
+              assignedPrice: "",
+              buyerName: "",
+              buyerEmail: "",
+              closed: "No",
+              closedDate: "",
+              closedInMonth: "",
+            }
+          : {}),
+      }));
+      return;
+    }
+
+    if (name === "assigned") {
+      setForm((prev) => ({
+        ...prev,
+        assigned: value,
+        ...(value !== "Yes"
+          ? {
+              assignedPrice: "",
+              buyerName: "",
+              buyerEmail: "",
+              closed: "No",
+              closedDate: "",
+              closedInMonth: "",
+            }
+          : {}),
+      }));
+      return;
+    }
+
     const currencyFields = [
       "arv",
       "rehabCost",

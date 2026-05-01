@@ -134,7 +134,7 @@ function Wholesale_form({
           )}
           {form.offerStatus !== "Not Sent" && (
             <Select
-              label="Accepted"
+              label="Offer Accepted"
               name="sellerAccepted"
               value={form.sellerAccepted}
               onChange={handleChange}
@@ -142,15 +142,16 @@ function Wholesale_form({
               required
             />
           )}
-          {form.sellerAccepted !== "No" && (
-            <Select
-              label="Assigned"
-              name="assigned"
-              value={form.assigned}
-              onChange={handleChange}
-              options={["No", "Yes"]}
-            />
-          )}
+          {form.sellerAccepted !== "No" &&
+            form.sellerAccepted !== "Waiting" && (
+              <Select
+                label="Assigned"
+                name="assigned"
+                value={form.assigned}
+                onChange={handleChange}
+                options={["No", "Yes"]}
+              />
+            )}
           {form.assigned === "Yes" && (
             <>
               <Field
@@ -186,23 +187,27 @@ function Wholesale_form({
             onChange={handleChange}
             required
           />
-          <Select
-            label="Closed"
-            name="closed"
-            value={form.closed}
-            onChange={handleChange}
-            options={["No", "Yes"]}
-            required
-          />
-          {form.closed === "Yes" && (
-            <Field
-              label="Closed On"
-              name="closedDate"
-              type="date"
-              value={form.closedDate}
-              onChange={handleChange}
-              required
-            />
+          {form.sellerAccepted === "Yes" && form.assigned === "Yes" && (
+            <>
+              <Select
+                label="Closed"
+                name="closed"
+                value={form.closed}
+                onChange={handleChange}
+                options={["No", "Yes"]}
+                required
+              />
+              {form.closed === "Yes" && (
+                <Field
+                  label="Closed On"
+                  name="closedDate"
+                  type="date"
+                  value={form.closedDate}
+                  onChange={handleChange}
+                  required
+                />
+              )}
+            </>
           )}
           <button className="primary-btn form-btn" type="submit">
             Save
