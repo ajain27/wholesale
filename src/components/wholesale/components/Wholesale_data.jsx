@@ -64,6 +64,7 @@ function Wholesale_data({
 
   async function updateDeal(id, field, value) {
     const deal = deals.find((d) => d.id === id);
+    let resolvedClosedDate = deal?.closedDate || "";
 
     // Business Rule: Enforce the "Closed" requirements even on updates
     if (field === "closed" && value === "Yes") {
@@ -75,11 +76,39 @@ function Wholesale_data({
         );
         return;
       }
+
+      resolvedClosedDate = window.prompt(
+        "Enter the close date (YYYY-MM-DD).",
+        deal.closedDate || "",
+      );
+
+      if (!resolvedClosedDate) {
+        return;
+      }
+
+      const isValidClosedDate = /^\d{4}-\d{2}-\d{2}$/.test(resolvedClosedDate);
+      if (!isValidClosedDate) {
+        alert("Please enter a valid close date in YYYY-MM-DD format.");
+        return;
+      }
     }
 
-    const nextDeals = deals.map((deal) =>
-      deal.id === id ? { ...deal, [field]: value } : deal,
-    );
+    const nextDeals = deals.map((dealItem) => {
+      if (dealItem.id !== id) return dealItem;
+
+      const nextDeal = { ...dealItem, [field]: value };
+      if (field === "closed") {
+        if (value === "Yes") {
+          nextDeal.closedDate = resolvedClosedDate;
+          nextDeal.closedInMonth = resolvedClosedDate.slice(5, 7);
+        } else {
+          nextDeal.closedDate = "";
+          nextDeal.closedInMonth = "";
+        }
+      }
+
+      return nextDeal;
+    });
 
     const updatedDeal = nextDeals.find((deal) => deal.id === id);
     try {
@@ -148,6 +177,7 @@ function Wholesale_data({
               <th>Assigned Price</th>
               <th>Buyer Info</th>
               <th>Closed</th>
+              <th>Closed On</th>
               <th>Gross Revenue</th>
             </tr>
           </thead>
@@ -389,6 +419,19 @@ function Wholesale_data({
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
+                </td>
+                <td>
+                  {deal.closed === "Yes" ? (
+                    <input
+                      type="date"
+                      className="readonly-input date-input closed-date-input"
+                      value={deal.closedDate || ""}
+                      disabled
+                      readOnly
+                    />
+                  ) : (
+                    <span className="placeholder-dash">—</span>
+                  )}
                 </td>
                 <td>
                   {deal.closed === "Yes" ? (

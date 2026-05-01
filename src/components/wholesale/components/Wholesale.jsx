@@ -36,6 +36,7 @@ const emptyForm = {
   buyerEmail: "",
   notes: "",
   closed: "No",
+  closedDate: "",
   closedInMonth: "",
 };
 
@@ -110,6 +111,15 @@ function Wholesale() {
         );
         return; // Block the change
       }
+    }
+
+    if (name === "closed") {
+      setForm((prev) => ({
+        ...prev,
+        closed: value,
+        ...(value === "No" ? { closedDate: "", closedInMonth: "" } : {}),
+      }));
+      return;
     }
 
     const currencyFields = [
@@ -266,6 +276,11 @@ function Wholesale() {
       return;
     }
 
+    if (form.closed === "Yes" && !form.closedDate) {
+      alert("Please select the close date for a closed deal.");
+      return;
+    }
+
     const arvNum = parseNumber(form.arv);
     const maoNum = parseNumber(form.mao);
     const contractNum = parseNumber(form.contractPrice);
@@ -313,7 +328,11 @@ function Wholesale() {
       profit: profitNum,
       buyerName: form.buyerName?.trim() || "",
       buyerEmail: form.buyerEmail?.trim().toLowerCase() || "",
-      closedInMonth: form.closedInMonth || "",
+      closedDate: form.closed === "Yes" ? form.closedDate : "",
+      closedInMonth:
+        form.closed === "Yes" && form.closedDate
+          ? form.closedDate.slice(5, 7)
+          : "",
     };
 
     try {
@@ -465,7 +484,9 @@ function Wholesale() {
       const matchesOfferMonth =
         filters.offerMonth === "All" || dealOfferMonth === filters.offerMonth;
 
-      const dealClosedMonth = deal.closedInMonth || "";
+      const dealClosedMonth = deal.closedDate
+        ? deal.closedDate.substring(5, 7)
+        : deal.closedInMonth || "";
       const matchesClosedMonth =
         filters.closedMonth === "All" ||
         dealClosedMonth === filters.closedMonth;

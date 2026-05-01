@@ -21,6 +21,7 @@ const deal = {
   buyerEmail: "",
   notes: "",
   closed: "No",
+  closedDate: "",
   closedInMonth: "",
 };
 
@@ -47,6 +48,80 @@ describe("Wholesale_data", () => {
         ...deal,
         offerStatus: "Offer Sent",
       });
+    });
+    expect(persist).toHaveBeenCalled();
+  });
+
+  it("shows a disabled closed date for closed deals", () => {
+    render(
+      <Wholesale_data
+        filteredDeals={[
+          {
+            ...deal,
+            closed: "Yes",
+            closedDate: "2026-04-30",
+          },
+        ]}
+        deals={[
+          {
+            ...deal,
+            closed: "Yes",
+            closedDate: "2026-04-30",
+          },
+        ]}
+        deleteDeal={vi.fn()}
+        persist={vi.fn()}
+        saveDeal={vi.fn()}
+      />,
+    );
+
+    const closedDateInput = screen.getByDisplayValue("2026-04-30");
+    expect(closedDateInput).toBeDisabled();
+  });
+
+  it("saves the entered closed date when a deal is marked closed", async () => {
+    const saveDeal = vi.fn().mockResolvedValue(undefined);
+    const persist = vi.fn();
+    vi.spyOn(window, "prompt").mockReturnValue("2026-04-12");
+
+    render(
+      <Wholesale_data
+        filteredDeals={[
+          {
+            ...deal,
+            offerStatus: "Offer Sent",
+            sellerAccepted: "Yes",
+            assigned: "Yes",
+          },
+        ]}
+        deals={[
+          {
+            ...deal,
+            offerStatus: "Offer Sent",
+            sellerAccepted: "Yes",
+            assigned: "Yes",
+          },
+        ]}
+        deleteDeal={vi.fn()}
+        persist={persist}
+        saveDeal={saveDeal}
+      />,
+    );
+
+    const closedSelect = screen.getByDisplayValue("No");
+    fireEvent.change(closedSelect, { target: { value: "Yes" } });
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(saveDeal).toHaveBeenCalledWith({
+      ...deal,
+      offerStatus: "Offer Sent",
+      sellerAccepted: "Yes",
+      assigned: "Yes",
+      closed: "Yes",
+      closedDate: "2026-04-12",
+      closedInMonth: "04",
     });
     expect(persist).toHaveBeenCalled();
   });

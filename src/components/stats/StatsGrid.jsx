@@ -4,6 +4,12 @@ import { currency, monthKey } from "../../utils/utils";
 
 export default function StatsGrid({ deals, filteredDeals, filters }) {
   const currentMonth = new Date().toISOString().slice(0, 7);
+  const currentClosedMonth = String(new Date().getMonth() + 1).padStart(2, "0");
+  const currentMonthLabel = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+  }).format(new Date());
+  const getClosedMonth = (deal) =>
+    deal.closedDate ? deal.closedDate.slice(5, 7) : deal.closedInMonth || "";
   const offersThisMonth = filteredDeals.filter(
     (deal) => deal.offerDate && monthKey(deal.offerDate) === currentMonth,
   ).length;
@@ -20,7 +26,31 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
     (deal) => deal.closed !== "Yes",
   ).length;
 
-  const totalGrossRevenue = filteredDeals
+  const revenueEligibleDeals = deals.filter(
+    (deal) =>
+      deal.closed === "Yes" &&
+      deal.sellerAccepted === "Yes" &&
+      deal.assigned === "Yes",
+  );
+
+  const currentMonthGrossRevenue = revenueEligibleDeals
+    .filter((deal) => getClosedMonth(deal) === currentClosedMonth)
+    .reduce(
+      (total, deal) =>
+        total +
+        (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)),
+      0,
+    );
+
+  const overallGrossRevenue = revenueEligibleDeals
+    .reduce(
+      (total, deal) =>
+        total +
+        (Number(deal.assignedPrice || 0) - Number(deal.contractPrice || 0)),
+      0,
+    );
+
+  const filteredDealsRevenue = filteredDeals
     .filter(
       (deal) =>
         deal.closed === "Yes" &&
@@ -102,8 +132,21 @@ export default function StatsGrid({ deals, filteredDeals, filters }) {
       />
       <SimpleStat
         icon={<DollarSign size={20} />}
+        label={`${currentMonthLabel} Gross Revenue`}
+        subtitle="Closed deals this month"
+        value={currency(currentMonthGrossRevenue)}
+      />
+      <SimpleStat
+        icon={<DollarSign size={20} />}
+        label="Overall Revenue"
+        subtitle="All closed deals"
+        value={currency(overallGrossRevenue)}
+      />
+      <SimpleStat
+        icon={<DollarSign size={20} />}
         label={revenueLabel}
-        value={currency(totalGrossRevenue)}
+        subtitle="Current filters"
+        value={currency(filteredDealsRevenue)}
       />
     </section>
   );

@@ -95,6 +95,12 @@ td {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   color-scheme: light;
 }
+.closed-date-input {
+  border: transparent;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
 .date-input::-webkit-datetime-edit {
   padding: 0;
 }
